@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DataMap — קונספט עמוד בית</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080b;
+  --bg-2:#0b0f14;
+  --line:rgba(214,255,58,.14);
+  --line-soft:rgba(255,255,255,.08);
+  --ink:#eef2f5;
+  --ink-2:#9aa6b2;
+  --ink-3:#5d6873;
+  --acc:#d6ff3a;
+  --acc-2:#39e1d0;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --sans:"Heebo",system-ui,sans-serif;
+  --gut:clamp(16px,4vw,56px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:400;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--acc);color:#000}
+
+/* grain */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.mono{font-family:var(--mono);letter-spacing:.02em}
+.wrap{padding-inline:var(--gut)}
+
+/* ---------- NAV ---------- */
+.nav{position:fixed;inset-inline:0;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:18px var(--gut);transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(6,8,11,.72);backdrop-filter:blur(14px);border-color:var(--line-soft)}
+.logo{display:flex;align-items:center;gap:12px;font-weight:900;font-size:22px;letter-spacing:-.01em}
+.logo svg{width:30px;height:30px}
+.logo span{direction:ltr}
+.nav ul{display:flex;gap:30px;list-style:none;font-size:15px;color:var(--ink-2)}
+.nav ul a{position:relative;transition:color .2s}
+.nav ul a:hover{color:var(--ink)}
+.nav ul a::after{content:"";position:absolute;inset-inline:0;bottom:-6px;height:1px;background:var(--acc);transform:scaleX(0);transition:transform .3s}
+.nav ul a:hover::after{transform:scaleX(1)}
+.nav-cta{display:flex;align-items:center;gap:14px}
+.lang{font-family:var(--mono);font-size:12px;color:var(--ink-3);border:1px solid var(--line-soft);padding:6px 9px;border-radius:999px}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--acc);color:#05070a;font-weight:700;font-size:15px;
+  padding:12px 20px;border-radius:999px;transition:transform .25s,box-shadow .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px -10px var(--acc)}
+.btn svg{width:16px;height:16px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.2)}
+.btn.ghost:hover{border-color:var(--acc);box-shadow:none}
+.burger{display:none;background:none;border:1px solid var(--line-soft);color:var(--ink);width:42px;height:42px;border-radius:50%}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;height:100svh;min-height:680px;overflow:hidden;display:flex;align-items:flex-end}
+#cloud{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to left,rgba(6,8,11,.92) 0%,rgba(6,8,11,.55) 38%,transparent 65%),
+             linear-gradient(to top,var(--bg) 0%,transparent 30%)}
+.hero-content{position:relative;z-index:2;padding:0 var(--gut) clamp(56px,10vh,110px);max-width:880px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--acc);
+  border:1px solid var(--line);padding:7px 12px;border-radius:999px;margin-bottom:28px;direction:ltr}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+h1{font-weight:900;font-size:clamp(46px,8.4vw,128px);line-height:.92;letter-spacing:-.035em}
+h1 .line{display:block;overflow:hidden;padding-bottom:.06em}
+h1 .line>span{display:inline-block;transform:translateY(105%);animation:rise 1.1s cubic-bezier(.2,.8,.2,1) forwards}
+h1 .line:nth-child(2)>span{animation-delay:.12s}
+h1 .hl{color:transparent;-webkit-text-stroke:1.5px var(--acc)}
+@keyframes rise{to{transform:none}}
+.hero p.lead{margin-top:28px;font-size:clamp(17px,1.6vw,21px);line-height:1.6;color:var(--ink-2);max-width:620px;font-weight:300;
+  opacity:0;animation:fade 1s .6s forwards}
+.hero-ctas{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;opacity:0;animation:fade 1s .8s forwards}
+@keyframes fade{to{opacity:1}}
+
+/* HUD */
+.hud{position:absolute;z-index:2;font-family:var(--mono);font-size:11px;color:var(--ink-2);direction:ltr;text-align:left;pointer-events:none}
+.hud b{color:var(--acc);font-weight:500}
+.hud-tl{top:96px;left:var(--gut)}
+.hud-bl{bottom:clamp(56px,10vh,110px);left:var(--gut)}
+.hud .box{border:1px solid var(--line-soft);background:rgba(6,8,11,.5);backdrop-filter:blur(6px);padding:12px 14px;position:relative;min-width:230px}
+.hud .box::before,.hud .box::after{content:"";position:absolute;width:10px;height:10px;border:1px solid var(--acc)}
+.hud .box::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.hud .box::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.hud .row{display:flex;justify-content:space-between;gap:24px;line-height:1.9}
+.hud .bar{height:2px;background:var(--line-soft);margin-top:8px;position:relative;overflow:hidden}
+.hud .bar i{position:absolute;inset-block:0;left:0;width:30%;background:var(--acc);animation:scan 3.2s linear infinite}
+@keyframes scan{from{transform:translateX(-100%)}to{transform:translateX(340%)}}
+.scroll-cue{position:absolute;z-index:2;bottom:28px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10px;color:var(--ink-3);
+  display:flex;flex-direction:column;align-items:center;gap:10px;letter-spacing:.2em}
+.scroll-cue::after{content:"";width:1px;height:38px;background:linear-gradient(var(--acc),transparent);animation:drop 2s infinite}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* crosshair cursor */
+.xh{position:fixed;z-index:90;pointer-events:none;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;opacity:0;transition:opacity .3s, width .25s, height .25s, margin .25s}
+.xh::before,.xh::after{content:"";position:absolute;background:var(--acc)}
+.xh::before{left:50%;top:0;bottom:0;width:1px}
+.xh::after{top:50%;left:0;right:0;height:1px}
+.xh i{position:absolute;inset:12px;border:1px solid var(--acc);border-radius:50%}
+.xh.big{width:72px;height:72px;margin:-36px 0 0 -36px}
+.xh-label{position:fixed;z-index:90;pointer-events:none;font-family:var(--mono);font-size:10px;color:var(--acc);direction:ltr;opacity:0;transition:opacity .3s;white-space:nowrap}
+@media (hover:hover) and (pointer:fine){ body.has-xh, body.has-xh a, body.has-xh button{cursor:none} }
+
+/* ---------- MARQUEE ---------- */
+.marquee{border-block:1px solid var(--line-soft);overflow:hidden;padding:22px 0;background:var(--bg-2)}
+.marquee .track{display:flex;width:max-content;animation:mq 42s linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+.marquee span{font-size:clamp(22px,2.6vw,34px);font-weight:700;white-space:nowrap;padding-inline:28px;display:flex;align-items:center;gap:56px;color:var(--ink-2)}
+.marquee span::after{content:"";width:10px;height:10px;transform:rotate(45deg);border:1.5px solid var(--acc)}
+@keyframes mq{to{transform:translateX(50%)}}
+
+/* ---------- SECTION HEADS ---------- */
+section{position:relative}
+.sec{padding:clamp(90px,14vw,180px) var(--gut)}
+.sec-head{display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:end;margin-bottom:clamp(48px,7vw,90px)}
+.kicker{font-family:var(--mono);font-size:12px;color:var(--acc);direction:ltr;text-align:right;display:block;margin-bottom:18px}
+h2{font-size:clamp(36px,5.4vw,80px);font-weight:900;line-height:.98;letter-spacing:-.03em}
+.sec-head p{color:var(--ink-2);font-size:18px;line-height:1.7;font-weight:300;max-width:560px}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- STATS ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-soft)}
+.stat{padding:44px 28px 40px;border-inline-start:1px solid var(--line-soft);position:relative}
+.stat:first-child{border-inline-start:0}
+.stat .num{font-family:var(--mono);font-size:clamp(44px,5.6vw,86px);font-weight:500;letter-spacing:-.04em;line-height:1;direction:ltr;text-align:right;display:block}
+.stat .num sup{font-size:.4em;color:var(--acc);vertical-align:top;margin-inline:.1em}
+.stat .lbl{display:block;margin-top:16px;color:var(--ink-2);font-size:16px}
+.stat .tick{position:absolute;top:-1px;inset-inline-start:0;height:2px;width:0;background:var(--acc);transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.stat.in .tick{width:60px}
+.iso{margin-top:26px;display:flex;align-items:center;gap:14px;color:var(--ink-3);font-family:var(--mono);font-size:12px;direction:ltr;justify-content:flex-end}
+.iso b{color:var(--ink);font-weight:500;border:1px solid var(--line-soft);padding:6px 10px;border-radius:4px}
+
+/* ---------- SERVICES (bento) ---------- */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.card{position:relative;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:20px;padding:30px;min-height:290px;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;isolation:isolate;transition:border-color .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.card:hover{border-color:rgba(214,255,58,.4)}
+.card::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .4s;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(214,255,58,.12),transparent 60%)}
+.card:hover::before{opacity:1}
+.card .idx{font-family:var(--mono);font-size:12px;color:var(--ink-3);direction:ltr;text-align:left}
+.card h3{font-size:clamp(22px,2vw,30px);font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.card p{color:var(--ink-2);font-size:15px;line-height:1.6;margin-top:10px;max-width:420px}
+.card .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;direction:ltr;justify-content:flex-end}
+.card .tags i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--ink-2);border:1px solid var(--line-soft);padding:4px 8px;border-radius:999px}
+.card .art{position:absolute;inset:0;z-index:-1;opacity:.55;transition:opacity .5s,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.card:hover .art{opacity:.95;transform:scale(1.04)}
+.card .arrow{position:absolute;top:26px;right:26px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line-soft);display:grid;place-items:center;transition:all .35s}
+.card:hover .arrow{background:var(--acc);border-color:var(--acc);color:#000;transform:rotate(-45deg)}
+.card .arrow svg{width:14px;height:14px}
+.c-a{grid-column:span 4;min-height:420px}
+.c-b{grid-column:span 2;min-height:420px}
+.c-c,.c-d,.c-e{grid-column:span 2}
+.c-f{grid-column:span 3}
+.c-g{grid-column:span 3}
+.card-list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.mini{border:1px solid var(--line-soft);border-radius:16px;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:background .3s,border-color .3s}
+.mini:hover{background:var(--bg-2);border-color:rgba(214,255,58,.35)}
+.mini span{font-weight:500;font-size:17px}
+.mini em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+
+/* ---------- LAYERS (sticky 3D) ---------- */
+.layers{height:420vh;border-top:1px solid var(--line-soft)}
+.layers .stick{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:1fr 1.15fr;align-items:center;padding-inline:var(--gut);gap:40px;overflow:hidden}
+.ltext .kicker{text-align:right}
+.lsteps{position:relative;margin-top:30px;min-height:260px}
+.lstep{position:absolute;inset:0;opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
+.lstep.on{opacity:1;transform:none}
+.lstep .n{font-family:var(--mono);color:var(--acc);font-size:13px}
+.lstep h3{font-size:clamp(34px,4vw,58px);font-weight:900;letter-spacing:-.03em;margin:10px 0 16px;line-height:1}
+.lstep p{color:var(--ink-2);font-size:18px;line-height:1.7;max-width:480px;font-weight:300}
+.lprog{display:flex;gap:8px;margin-top:20px}
+.lprog i{height:3px;flex:1;max-width:70px;background:var(--line-soft);border-radius:2px;overflow:hidden;position:relative}
+.lprog i::after{content:"";position:absolute;inset:0;background:var(--acc);transform:scaleX(var(--f,0));transform-origin:right}
+.stage{height:min(80vh,720px);perspective:1800px;display:grid;place-items:center;position:relative}
+.stack{position:relative;width:min(38vw,470px);aspect-ratio:1;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-38deg)}
+.plane{position:absolute;inset:0;border:1px solid rgba(214,255,58,.35);transform-style:preserve-3d;transition:border-color .4s,opacity .4s;
+  transform:translateZ(calc(var(--i) * var(--gap,0px)));background:rgba(9,13,17,.82)}
+.plane svg{width:100%;height:100%;display:block}
+.plane.dim{opacity:.35}
+.plane .tag{position:absolute;bottom:100%;right:0;margin-bottom:6px;font-family:var(--mono);font-size:11px;color:var(--acc);white-space:nowrap;direction:ltr;
+  transform:rotateZ(38deg) rotateX(-58deg);transform-origin:bottom right;opacity:var(--tagop,0);transition:opacity .4s}
+
+/* ---------- PROJECT FEATURE ---------- */
+.feature{display:grid;grid-template-columns:1.2fr 1fr;gap:0;border:1px solid var(--line-soft);border-radius:24px;overflow:hidden;background:var(--bg-2)}
+.feature .vis{position:relative;min-height:520px;background:#070a0d;overflow:hidden}
+.feature .vis svg{position:absolute;inset:0;width:100%;height:100%}
+.feature .txt{padding:clamp(32px,4vw,60px);display:flex;flex-direction:column;justify-content:space-between;gap:30px}
+.feature h3{font-size:clamp(30px,3.4vw,52px);font-weight:900;letter-spacing:-.03em;line-height:1.02}
+.feature p{color:var(--ink-2);font-size:17px;line-height:1.7;font-weight:300}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;border-top:1px solid var(--line-soft);padding-top:24px}
+.meta dt{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-bottom:6px}
+.meta dd{font-weight:500}
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 3s cubic-bezier(.6,.1,.2,1)}
+.in .draw{stroke-dashoffset:0}
+
+/* ---------- GROUP ---------- */
+.group{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-soft)}
+.co{padding:38px 28px 44px;border-inline-start:1px solid var(--line-soft);position:relative;transition:background .4s;min-height:300px;display:flex;flex-direction:column;justify-content:space-between}
+.co:first-child{border-inline-start:0}
+.co:hover{background:linear-gradient(to bottom,rgba(214,255,58,.06),transparent)}
+.co .no{font-family:var(--mono);font-size:56px;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.18);transition:-webkit-text-stroke-color .4s;direction:ltr;text-align:right}
+.co:hover .no{-webkit-text-stroke-color:var(--acc)}
+.co h4{font-size:24px;font-weight:700;line-height:1.2}
+.co p{color:var(--ink-2);margin-top:8px;font-size:15px}
+
+/* ---------- CLIENTS ---------- */
+.clients{display:flex;flex-wrap:wrap;gap:12px}
+.chip{font-size:clamp(20px,2.4vw,34px);font-weight:300;padding:16px 28px;border:1px solid var(--line-soft);border-radius:999px;transition:all .35s}
+.chip:hover{background:var(--acc);color:#000;border-color:var(--acc);font-weight:500}
+
+/* ---------- CTA ---------- */
+.cta{position:relative;overflow:hidden;border-top:1px solid var(--line-soft);padding:clamp(110px,16vw,220px) var(--gut);text-align:center}
+.cta canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.7}
+.cta h2{position:relative;font-size:clamp(48px,9vw,150px);line-height:.9}
+.cta h2 em{font-style:normal;color:var(--acc)}
+.cta .mail{position:relative;display:inline-block;margin-top:44px;font-family:var(--mono);font-size:clamp(18px,2.2vw,28px);direction:ltr;border-bottom:1px solid var(--acc);padding-bottom:6px;transition:color .3s}
+.cta .mail:hover{color:var(--acc)}
+.cta .row{position:relative;display:flex;justify-content:center;gap:12px;margin-top:40px;flex-wrap:wrap}
+
+footer{border-top:1px solid var(--line-soft);padding:56px var(--gut) 36px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;color:var(--ink-2);font-size:15px}
+footer h5{font-family:var(--mono);font-size:11px;color:var(--ink-3);font-weight:400;margin-bottom:16px;letter-spacing:.1em}
+footer li{list-style:none;line-height:2.1}
+footer li a:hover{color:var(--acc)}
+.foot-bottom{grid-column:1/-1;direction:ltr;display:flex;justify-content:space-between;border-top:1px solid var(--line-soft);padding-top:26px;font-family:var(--mono);font-size:11px;color:var(--ink-3);flex-wrap:wrap;gap:12px}
+.concept-note{position:fixed;z-index:60;bottom:16px;right:16px;font-family:var(--mono);font-size:11px;background:rgba(214,255,58,.95);color:#000;padding:8px 12px;border-radius:999px;direction:rtl}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1080px){
+  .nav ul{display:none}
+  .burger{display:grid;place-items:center}
+  .sec-head{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(3){border-inline-start:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line-soft)}
+  .bento{grid-template-columns:repeat(2,1fr)}
+  .c-a,.c-b,.c-c,.c-d,.c-e,.c-f,.c-g{grid-column:span 2;min-height:300px}
+  .card-list{grid-template-columns:1fr 1fr}
+  .layers{height:auto}
+  .layers .stick{position:relative;height:auto;grid-template-columns:1fr;padding-block:100px}
+  .lsteps{min-height:0}
+  .lstep{position:relative;opacity:1;transform:none;margin-bottom:40px}
+  .lprog{display:none}
+  .stack{width:min(78vw,440px)}
+  .stage{height:auto;padding-block:120px 60px}
+  .feature{grid-template-columns:1fr}
+  .feature .vis{min-height:340px}
+  .group{grid-template-columns:1fr 1fr}
+  .co:nth-child(3){border-inline-start:0}
+  .co:nth-child(n+3){border-top:1px solid var(--line-soft)}
+  footer{grid-template-columns:1fr 1fr}
+  .hud-tl{display:none}
+}
+@media (max-width:640px){
+  .nav-cta .btn,.lang{display:none}
+  .hud-bl,.scroll-cue{display:none}
+  .stats,.group,.card-list{grid-template-columns:1fr}
+  .stat,.co{border-inline-start:0!important;border-top:1px solid var(--line-soft)}
+  .bento{grid-template-columns:1fr}
+  .c-a,.c-b,.c-c,.c-d,.c-e,.c-f,.c-g{grid-column:span 1}
+  .hero::before{background:linear-gradient(to top,var(--bg) 10%,rgba(6,8,11,.6) 55%,rgba(6,8,11,.2))}
+  footer{grid-template-columns:1fr}
+  .concept-note{left:16px;right:16px;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  h1 .line>span{transform:none}
+  .hero p.lead,.hero-ctas{opacity:1}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="xh" aria-hidden="true"><i></i></div>
+<div class="xh-label" aria-hidden="true"></div>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a href="#" class="logo" aria-label="DataMap">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="14" stroke="#d6ff3a" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="8" stroke="#d6ff3a" stroke-width="1.5" opacity=".6"/>
+      <path d="M16 0v32M0 16h32" stroke="#d6ff3a" stroke-width="1.2"/>
+      <circle cx="16" cy="16" r="2.4" fill="#d6ff3a"/>
+    </svg>
+    <span>DataMap</span>
+  </a>
+  <ul>
+    <li><a href="#services">שירותים</a></li>
+    <li><a href="#layers">איך אנחנו עובדים</a></li>
+    <li><a href="#projects">פרויקטים</a></li>
+    <li><a href="#group">הקבוצה</a></li>
+    <li><a href="#clients">לקוחות</a></li>
+    <li><a href="#">דרושים</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a class="lang" href="#">EN</a>
+    <a class="btn" href="#contact">לקבלת הצעת מחיר
+      <svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></a>
+    <button class="burger" aria-label="תפריט"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M1 5h14M1 11h14" stroke="currentColor" stroke-width="1.5"/></svg></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <canvas id="cloud" aria-hidden="true"></canvas>
+
+  <div class="hud hud-tl"><div class="box">
+    <div class="row"><span>SYS</span><b>LIDAR · GNSS/RTK</b></div>
+    <div class="row"><span>GRID</span><span>ITM / ISRAEL 1993</span></div>
+    <div class="row"><span>ACCURACY</span><b>±5 cm</b></div>
+    <div class="bar"><i></i></div>
+  </div></div>
+
+  <div class="hud hud-bl"><div class="box">
+    <div class="row"><span>E</span><b id="hE">178,452.31</b></div>
+    <div class="row"><span>N</span><b id="hN">663,210.08</b></div>
+    <div class="row"><span>H</span><span id="hH">812.4 m</span></div>
+    <div class="row"><span>PTS</span><span id="hP">25,600</span></div>
+  </div></div>
+
+  <div class="hero-content">
+    <span class="eyebrow"><i></i>EST. 1988 · ISRAEL</span>
+    <h1>
+      <span class="line"><span>מיפוי ומדידות</span></span>
+      <span class="line"><span>ל<span class="hl">בנות</span> עליהם.</span></span>
+    </h1>
+    <p class="lead">קבוצת דטהמפ — מהארגונים הגדולים בישראל במדידות קרקע, מיפוי פוטוגרמטרי, מערכות מידע גיאוגרפיות (GIS) וניהול פרויקטים הנדסיים.</p>
+    <div class="hero-ctas">
+      <a class="btn" href="#contact">לקבלת הצעת מחיר
+        <svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></a>
+      <a class="btn ghost" href="#services">לכל השירותים</a>
+    </div>
+  </div>
+  <div class="scroll-cue">SCROLL</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true"><div class="track" id="mq">
+  <span>מדידות הנדסיות</span><span>מיפוי פוטוגרמטרי</span><span>אורתופוטו</span><span>GIS</span><span>רחפנים</span><span>LiDAR</span><span>BIM</span><span>מיפוי ימי</span><span>רישום מקרקעין</span><span>תב״ע ותצ״ר</span><span>ניהול פרויקטים</span>
+</div></div>
+
+<!-- STATS -->
+<section class="sec" style="padding-bottom:0">
+  <div class="stats">
+    <div class="stat reveal"><i class="tick"></i><span class="num" data-to="1988" data-plain>0</span><span class="lbl">שנת הקמה</span></div>
+    <div class="stat reveal"><i class="tick"></i><span class="num" data-to="120">0</span><span class="lbl">אנשי מקצוע</span></div>
+    <div class="stat reveal"><i class="tick"></i><span class="num" data-to="4000" data-plus>0</span><span class="lbl">פרויקטים</span></div>
+    <div class="stat reveal"><i class="tick"></i><span class="num"><sup>±</sup><span data-to="5">0</span><sup>cm</sup></span><span class="lbl">דיוק מדידה</span></div>
+  </div>
+  <div class="iso reveal"><span>CERTIFIED</span><b>ISO 9001:2015</b></div>
+</section>
+
+<!-- SERVICES -->
+<section class="sec" id="services">
+  <div class="sec-head reveal">
+    <div><span class="kicker">// 01 — SERVICES</span><h2>כל שכבה.<br>מהקרקע ועד הענן.</h2></div>
+    <p>מדידות שדה, מיפוי מהאוויר ומהים, מערכות GIS וליווי תכנוני — תחת קורת גג אחת, עם צוות מודדים מוסמכים וצי ציוד מתקדם.</p>
+  </div>
+
+  <div class="bento">
+    <a href="#" class="card c-a reveal">
+      <svg class="art" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs><filter id="wob"><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="70"/></filter></defs>
+        <g fill="none" stroke="#d6ff3a" stroke-width="1" filter="url(#wob)" opacity=".6">
+          <ellipse cx="200" cy="140" rx="30" ry="22"/><ellipse cx="200" cy="140" rx="70" ry="52"/><ellipse cx="200" cy="140" rx="115" ry="88"/>
+          <ellipse cx="200" cy="140" rx="165" ry="128"/><ellipse cx="200" cy="140" rx="220" ry="170"/><ellipse cx="200" cy="140" rx="280" ry="215"/>
+          <ellipse cx="200" cy="140" rx="345" ry="262"/><ellipse cx="200" cy="140" rx="415" ry="315"/><ellipse cx="200" cy="140" rx="490" ry="370"/>
+        </g>
+      </svg>
+      <span class="arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="idx">01 / ENGINEERING SURVEY</span>
+      <div><h3>מדידות הנדסיות</h3><p>מדידות טופוגרפיות, מדידות להיתרי בנייה, רשתות בקרה גיאודטיות ותוכניות לצורכי רישום — על ידי מודדים מוסמכים.</p>
+      <div class="tags"><i>Total Station</i><i>GNSS/RTK</i><i>LiDAR</i></div></div>
+    </a>
+    <a href="#" class="card c-b reveal">
+      <svg class="art" viewBox="0 0 300 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g stroke="#39e1d0" stroke-width=".8" fill="none" opacity=".55">
+          <path d="M0 60H300M0 120H300M0 180H300M0 240H300M0 300H300M0 360H300M50 0V420M100 0V420M150 0V420M200 0V420M250 0V420" opacity=".35"/>
+          <path d="M150 120 L40 20 M150 120 L260 20 M150 120 L40 260 M150 120 L260 260" stroke="#d6ff3a" stroke-dasharray="3 5"/>
+        </g>
+        <g transform="translate(150 120)"><rect x="-26" y="-6" width="52" height="12" rx="6" fill="#d6ff3a"/><circle cx="-34" cy="0" r="10" stroke="#d6ff3a" fill="none"/><circle cx="34" cy="0" r="10" stroke="#d6ff3a" fill="none"/></g>
+      </svg>
+      <span class="arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="idx">02 / AERIAL</span>
+      <div><h3>מיפוי אווירי ורחפנים</h3><p>רחפנים וכלי טיס למיפוי ומדידות קרקע, מעקב ובקרת כמויות, וצילום ווידאו מקצועי.</p></div>
+    </a>
+    <a href="#" class="card c-c reveal">
+      <svg class="art" viewBox="0 0 300 290" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="#d6ff3a" opacity=".5"><circle cx="60" cy="70" r="3"/><circle cx="140" cy="50" r="3"/><circle cx="220" cy="90" r="3"/><circle cx="90" cy="150" r="3"/><circle cx="190" cy="170" r="3"/><circle cx="250" cy="200" r="3"/></g>
+        <g stroke="#d6ff3a" stroke-width=".8" fill="none" opacity=".35"><path d="M60 70L140 50L220 90L190 170L90 150Z M220 90L250 200L190 170"/></g>
+        <g fill="none" stroke="#39e1d0" opacity=".5"><circle cx="190" cy="170" r="14"/><circle cx="190" cy="170" r="28" opacity=".5"/></g>
+      </svg>
+      <span class="arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="idx">03 / GIS</span>
+      <div><h3>מערכות מידע גיאוגרפיות</h3><p>פתרונות תוכנה בתחום המיפוי, המדידות וה־GIS לרשויות ולמשרדי ממשלה.</p></div>
+    </a>
+    <a href="#" class="card c-d reveal">
+      <svg class="art" viewBox="0 0 300 290" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="#d6ff3a" opacity=".4" stroke-width=".8">
+          <rect x="70" y="60" width="160" height="170"/><path d="M70 60L150 20L230 60M110 230V150H190V230M100 95H200M100 120H200"/>
+          <path d="M70 60L150 20L230 60" stroke-dasharray="2 4" transform="translate(0 -10)"/>
+        </g>
+      </svg>
+      <span class="arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="idx">04 / HERITAGE</span>
+      <div><h3>מדידות פנים, אדריכליות ושימור</h3><p>מדידות פנים וחוץ למבנים, סקרים אדריכליים ותיעוד לשימור.</p></div>
+    </a>
+    <a href="#" class="card c-e reveal">
+      <svg class="art" viewBox="0 0 300 290" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="#39e1d0" stroke-width=".9" opacity=".55">
+          <path d="M0 90 Q75 70 150 90 T300 90"/><path d="M0 130 Q75 105 150 130 T300 125"/><path d="M0 170 Q75 150 150 175 T300 165"/>
+          <path d="M0 210 Q75 195 150 220 T300 205"/><path d="M0 250 Q75 240 150 262 T300 245"/>
+        </g>
+        <path d="M150 20V80" stroke="#d6ff3a" stroke-dasharray="3 4"/><path d="M135 20h30l-6 10h-18z" fill="#d6ff3a"/>
+      </svg>
+      <span class="arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="idx">05 / MARINE</span>
+      <div><h3>מיפוי ימי</h3><p>סקרים בתימטריים בהתאם לתקן IHO S-44.</p></div>
+    </a>
+    <a href="#" class="card c-f reveal">
+      <svg class="art" viewBox="0 0 500 290" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="#d6ff3a" stroke-width=".8" opacity=".4">
+          <path d="M280 40h80v60h-80zM360 40h70v60h-70zM280 100h50v70h-50zM330 100h100v70H330zM280 170h150v60H280z"/>
+        </g>
+        <g fill="#d6ff3a" opacity=".7"><circle cx="280" cy="40" r="3"/><circle cx="360" cy="40" r="3"/><circle cx="430" cy="40" r="3"/><circle cx="330" cy="170" r="3"/><circle cx="430" cy="230" r="3"/></g>
+      </svg>
+      <span class="arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="idx">06 / CADASTRE</span>
+      <div><h3>רישום מקרקעין ותצ״ר</h3><p>מדידות קדסטר לחלקות ולמבנים, רישום תוכניות ורישום זכויות בטאבו.</p></div>
+    </a>
+    <a href="#" class="card c-g reveal">
+      <svg class="art" viewBox="0 0 500 290" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="#39e1d0" stroke-width=".8" opacity=".45">
+          <path d="M260 230 L300 120 L340 170 L380 80 L420 140 L460 60"/>
+          <path d="M260 230H470M260 230V40" opacity=".5"/>
+        </g>
+        <g fill="#d6ff3a"><rect x="296" y="116" width="8" height="8"/><rect x="376" y="76" width="8" height="8"/><rect x="456" y="56" width="8" height="8"/></g>
+      </svg>
+      <span class="arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="idx">07 / PROJECT MGMT</span>
+      <div><h3>ניהול פרויקטים הנדסיים</h3><p>ליווי ופיקוח הנדסי על ביצוע, ניהול חוזים, בקרת תקציב ולוחות זמנים.</p></div>
+    </a>
+  </div>
+
+  <div class="card-list">
+    <a href="#" class="mini reveal"><span>מיפוי פוטוגרמטרי ואורתופוטו</span><em>08</em></a>
+    <a href="#" class="mini reveal"><span>מידול מבנים ב־BIM</span><em>09</em></a>
+    <a href="#" class="mini reveal"><span>ליווי תכנון ותב״ע</span><em>10</em></a>
+    <a href="#" class="mini reveal"><span>רישום נכסי חברים בקיבוצים</span><em>11</em></a>
+    <a href="#" class="mini reveal"><span>תכנון כבישים</span><em>12</em></a>
+    <a href="#" class="mini reveal"><span>ניהול ייעודי קרקע ותשתיות</span><em>13</em></a>
+  </div>
+</section>
+
+<!-- LAYERS -->
+<section class="layers" id="layers">
+  <div class="stick">
+    <div class="ltext">
+      <span class="kicker">// 02 — FROM FIELD TO DATA</span>
+      <h2>שכבה על שכבה.</h2>
+      <div class="lsteps">
+        <div class="lstep" data-s="0"><span class="n mono">L.01</span><h3>מדידה בשטח</h3><p>צוותי מדידה עם GNSS/RTK, תחנות טוטאליות ו־LiDAR יוצרים את שלד הנתונים — נקודה אחר נקודה.</p></div>
+        <div class="lstep" data-s="1"><span class="n mono">L.02</span><h3>מיפוי מהאוויר</h3><p>רחפנים וכלי טיס מייצרים מיפוי פוטוגרמטרי ואורתופוטו מדויק של כל השטח.</p></div>
+        <div class="lstep" data-s="2"><span class="n mono">L.03</span><h3>קדסטר ורישום</h3><p>חלקות, גבולות וזכויות — מוכנים לרישום, לתצ״ר ולטאבו.</p></div>
+        <div class="lstep" data-s="3"><span class="n mono">L.04</span><h3>GIS ותכנון</h3><p>הכל מתחבר למערכת מידע גיאוגרפית אחת — לניהול, לתכנון ולקבלת החלטות.</p></div>
+      </div>
+      <div class="lprog"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="stage">
+      <div class="stack" id="stack">
+        <!-- L1 terrain -->
+        <div class="plane" style="--i:0"><span class="tag">L.01 SURVEY · POINTS</span>
+          <svg viewBox="0 0 400 400" aria-hidden="true"><defs><filter id="wob2"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="2" seed="9"/><feDisplacementMap in="SourceGraphic" scale="45"/></filter>
+            <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="1.1" fill="#d6ff3a" opacity=".5"/></pattern></defs>
+            <rect width="400" height="400" fill="url(#dots)"/>
+            <g fill="none" stroke="#d6ff3a" stroke-width="1" filter="url(#wob2)" opacity=".75">
+              <circle cx="220" cy="180" r="20"/><circle cx="220" cy="180" r="50"/><circle cx="220" cy="180" r="85"/><circle cx="220" cy="180" r="125"/><circle cx="220" cy="180" r="170"/><circle cx="220" cy="180" r="220"/><circle cx="220" cy="180" r="275"/>
+            </g></svg></div>
+        <!-- L2 ortho -->
+        <div class="plane" style="--i:1"><span class="tag">L.02 ORTHOPHOTO</span>
+          <svg viewBox="0 0 400 400" aria-hidden="true"><defs><filter id="orth"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="4" seed="3"/><feColorMatrix values="0 0 0 0 .22  0 0 0 0 .88  0 0 0 0 .82  0 0 0 1.4 -.55"/></filter></defs>
+            <rect width="400" height="400" filter="url(#orth)" opacity=".7"/>
+            <path d="M0 260 C120 230 180 300 400 210" stroke="#eef2f5" stroke-width="5" fill="none" opacity=".35"/>
+            <g fill="none" stroke="#eef2f5" opacity=".25"><rect x="60" y="60" width="40" height="30"/><rect x="120" y="70" width="30" height="40"/><rect x="290" y="80" width="50" height="40"/><rect x="250" y="300" width="60" height="40"/></g></svg></div>
+        <!-- L3 cadastre -->
+        <div class="plane" style="--i:2"><span class="tag">L.03 CADASTRE · PARCELS</span>
+          <svg viewBox="0 0 400 400" aria-hidden="true"><g fill="none" stroke="#d6ff3a" stroke-width="1.1" opacity=".8">
+            <path d="M0 120L160 100L180 0M160 100L170 230L0 250M170 230L400 210M180 0L190 100L400 90M190 100L230 220M290 95L300 215M170 230L150 400M300 215L320 400M230 220L240 400"/></g>
+            <g font-family="IBM Plex Mono" font-size="11" fill="#d6ff3a" opacity=".8"><text x="60" y="70">1024</text><text x="70" y="190">1025</text><text x="240" y="160">1031</text><text x="330" y="160">1032</text><text x="60" y="330">1040</text><text x="260" y="320">1041</text></g></svg></div>
+        <!-- L4 gis -->
+        <div class="plane" style="--i:3"><span class="tag">L.04 GIS</span>
+          <svg viewBox="0 0 400 400" aria-hidden="true"><g stroke="#39e1d0" stroke-width="1.4" fill="none" opacity=".8"><path d="M30 350L110 260L200 280L280 160L370 60"/><path d="M40 60L150 150L260 330" stroke-dasharray="4 5"/></g>
+            <g fill="#d6ff3a"><circle cx="110" cy="260" r="6"/><circle cx="200" cy="280" r="6"/><circle cx="280" cy="160" r="6"/><circle cx="150" cy="150" r="6"/></g>
+            <g fill="none" stroke="#d6ff3a"><circle cx="280" cy="160" r="16"/><circle cx="280" cy="160" r="30" opacity=".4"/></g></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROJECT -->
+<section class="sec" id="projects">
+  <div class="sec-head reveal">
+    <div><span class="kicker">// 03 — SELECTED WORK</span><h2>מדויק עד<br>האבן האחרונה.</h2></div>
+    <p>מעל 4,000 פרויקטים — מתשתיות לאומיות ועד תיעוד מבנים היסטוריים.</p>
+  </div>
+  <article class="feature reveal">
+    <div class="vis">
+      <svg viewBox="0 0 600 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs><pattern id="g" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="rgba(255,255,255,.05)"/></pattern></defs>
+        <rect width="600" height="520" fill="url(#g)"/>
+        <g fill="none" stroke="#d6ff3a" stroke-width="1.4">
+          <path class="draw" style="--len:1200" d="M110 440V200L150 170V120H200V160H250V90L300 60L350 90V160H400V120H450V170L490 200V440Z"/>
+          <path class="draw" style="--len:600" d="M255 440V310Q300 250 345 310V440"/>
+          <path class="draw" style="--len:400" d="M150 260H210V320H150ZM390 260H450V320H390Z" opacity=".7"/>
+          <path class="draw" style="--len:900" d="M110 200H490M110 380H490" stroke-dasharray="3 6" opacity=".5"/>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="10" fill="#9aa6b2">
+          <text x="500" y="204">+812.40</text><text x="500" y="384">+806.15</text><text x="292" y="50">+824.92</text>
+        </g>
+        <g stroke="#39e1d0" fill="none"><path d="M60 470H540" /><path d="M60 464v12M540 464v12"/></g>
+        <text x="300" y="495" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#39e1d0">ELEVATION · CONSERVATION SURVEY</text>
+      </svg>
+    </div>
+    <div class="txt">
+      <div><span class="kicker" style="text-align:right">FEATURED</span>
+      <h3>שער יפו, העיר העתיקה ירושלים</h3>
+      <p style="margin-top:16px">סקר שימור מלא לאחד השערים ההיסטוריים החשובים בארץ — מדידות פנים וחוץ ותיעוד אדריכלי מפורט.</p></div>
+      <dl class="meta"><div><dt>DISCIPLINE</dt><dd>מדידות לשימור</dd></div><div><dt>LOCATION</dt><dd>ירושלים</dd></div></dl>
+      <a class="btn ghost" href="#" style="align-self:flex-start">לכל הפרויקטים</a>
+    </div>
+  </article>
+</section>
+
+<!-- GROUP -->
+<section class="sec" id="group" style="padding-top:0">
+  <div class="sec-head reveal">
+    <div><span class="kicker">// 04 — THE GROUP</span><h2>ארבע חברות.<br>מערכת אחת.</h2></div>
+    <p>הקבוצה פועלת דרך חברות מתמחות, כל אחת מובילה בתחומה — יחד הן מכסות את כל שרשרת הערך של המידע המרחבי.</p>
+  </div>
+  <div class="group">
+    <div class="co reveal"><span class="no">01</span><div><h4>דטהמפ</h4><p>מערכות מידע גיאוגרפיות</p></div></div>
+    <div class="co reveal"><span class="no">02</span><div><h4>גטניו ושות׳</h4><p>מודדים מוסמכים</p></div></div>
+    <div class="co reveal"><span class="no">03</span><div><h4>פרייברג מהנדסים</h4><p>הנדסה וניהול פרויקטים</p></div></div>
+    <div class="co reveal"><span class="no">04</span><div><h4>ארד</h4><p>ניהול ותכנון עירוני</p></div></div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section class="sec" id="clients" style="padding-top:0">
+  <div class="sec-head reveal">
+    <div><span class="kicker">// 05 — CLIENTS</span><h2>סומכים עלינו.</h2></div>
+  </div>
+  <div class="clients reveal">
+    <span class="chip">משרדי ממשלה</span><span class="chip">חברות ורשויות ממשלתיות</span><span class="chip">רשויות מקומיות</span>
+    <span class="chip">קיבוצים ומושבים</span><span class="chip">יזמים פרטיים</span><span class="chip">אדריכלים ומתכננים</span>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+  <canvas id="contour" aria-hidden="true"></canvas>
+  <span class="kicker" style="position:relative;text-align:center">// LET'S MEASURE IT</span>
+  <h2 class="reveal">יש לכם פרויקט?<br><em>בואו נמפה אותו.</em></h2>
+  <a class="mail" href="mailto:info@datamap.com">info@datamap.com</a>
+  <div class="row"><a class="btn" href="mailto:info@datamap.com">לקבלת הצעת מחיר
+    <svg viewBox="0 0 16 16" fill="none"><path d="M13 8H3m0 0 4-4M3 8l4 4" stroke="currentColor" stroke-width="1.6"/></svg></a></div>
+</section>
+
+<footer>
+  <div>
+    <a href="#" class="logo" style="margin-bottom:16px"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" stroke="#d6ff3a" stroke-width="1.5"/><circle cx="16" cy="16" r="8" stroke="#d6ff3a" stroke-width="1.5" opacity=".6"/><path d="M16 0v32M0 16h32" stroke="#d6ff3a" stroke-width="1.2"/><circle cx="16" cy="16" r="2.4" fill="#d6ff3a"/></svg><span>DataMap</span></a>
+    <p style="max-width:300px;line-height:1.7">מיפוי ומדידות לבנות עליהם. מאז 1988.</p>
+  </div>
+  <div><h5>SERVICES</h5><ul><li><a href="#">מדידות הנדסיות</a></li><li><a href="#">מיפוי אווירי</a></li><li><a href="#">GIS</a></li><li><a href="#">מיפוי ימי</a></li></ul></div>
+  <div><h5>COMPANY</h5><ul><li><a href="#">אודות</a></li><li><a href="#">הצוות</a></li><li><a href="#">פרויקטים</a></li><li><a href="#">דרושים</a></li></ul></div>
+  <div><h5>CONTACT</h5><ul><li><a href="mailto:info@datamap.com" style="direction:ltr;display:inline-block">info@datamap.com</a></li></ul></div>
+  <div class="foot-bottom"><span>31.7683° N · 35.2137° E</span><span>ISO 9001:2015</span><span>© DATAMAP GROUP</span></div>
+</footer>
+
+<div class="concept-note">קונספט עיצוב · לא האתר החי</div>
+
+<script>
+(() => {
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+/* nav */
+const nav = document.getElementById('nav');
+addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40), {passive:true});
+
+/* marquee: duplicate track */
+const mq = document.getElementById('mq'); mq.innerHTML += mq.innerHTML;
+
+/* ---------- HERO POINT CLOUD ---------- */
+const cv = document.getElementById('cloud'), ctx = cv.getContext('2d');
+const N = 160, P = new Float32Array(N*N*3);
+const h = (x,z) => .34*Math.sin(x*2.1+1)*Math.cos(z*1.7) + .2*Math.sin(x*4.3+z*3.1+.5) + .07*Math.sin(x*9.2-z*7.4)
+                 + .28*Math.exp(-((x+.25)**2+(z-.15)**2)*5);
+for (let i=0,k=0;i<N;i++) for (let j=0;j<N;j++,k+=3){
+  const x=(i/(N-1)-.5)*2.4, z=(j/(N-1)-.5)*2.4; P[k]=x; P[k+1]=h(x,z); P[k+2]=z;
+}
+const BUCKETS = 10, cols = [];
+for (let b=0;b<BUCKETS;b++){ // teal -> lime
+  const t=b/(BUCKETS-1), r=Math.round(57+(214-57)*t), g=Math.round(225+(255-225)*t), bl=Math.round(208+(58-208)*t);
+  cols.push(`rgba(${r},${g},${bl},${.25+.6*t})`);
+}
+let W,H,dpr, yaw=-.7, pitch=.62, tYaw=-.7, tPitch=.62, mx=.5, my=.5, t0=performance.now(), heroVisible=true;
+function size(){ dpr=Math.min(devicePixelRatio||1,2); W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+size(); addEventListener('resize', size);
+const hero = document.querySelector('.hero');
+hero.addEventListener('pointermove', e => { const r=hero.getBoundingClientRect(); mx=(e.clientX-r.left)/r.width; my=(e.clientY-r.top)/r.height; });
+new IntersectionObserver(([e]) => heroVisible = e.isIntersecting).observe(hero);
+const hE=document.getElementById('hE'), hN=document.getElementById('hN'), hH=document.getElementById('hH');
+const fmt = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const lists = Array.from({length:BUCKETS},()=>[]);
+function frame(now){
+  requestAnimationFrame(frame);
+  if (!heroVisible) return;
+  const t=(now-t0)/1000;
+  tYaw = -.7 + (reduce?0:t*.05) + (mx-.5)*.9; tPitch = .55 + (my-.5)*.35;
+  yaw += (tYaw-yaw)*.05; pitch += (tPitch-pitch)*.05;
+  ctx.clearRect(0,0,W,H);
+  const mobile = W<700, cx = mobile ? W*.5 : W*.36, cy = mobile ? H*.34 : H*.52;
+  const F = Math.min(W,H)*(mobile?1.05:1.25), D=3.4;
+  const cyw=Math.cos(yaw), syw=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
+  const scan = ((t*.35)%1)*3.2-1.6; // scan plane along rotated x
+  for (const l of lists) l.length=0;
+  const hot=[];
+  for (let k=0;k<P.length;k+=3){
+    const x=P[k], y=P[k+1], z=P[k+2];
+    const xr = x*cyw - z*syw, zr = x*syw + z*cyw;
+    const yr = y*cp - zr*sp, zz = y*sp + zr*cp;
+    const s = F/(zz+D), px = cx + xr*s, py = cy - yr*s;
+    if (px<-5||px>W+5||py<-5||py>H+5) continue;
+    const contour = Math.abs(((y+1)*12)%1-.5) > .44;
+    if (Math.abs(x-scan)<.035) { hot.push(px,py); continue; }
+    let b = Math.max(0,Math.min(BUCKETS-1, ((y+.6)/1.3*(BUCKETS-1))|0));
+    if (contour) b = BUCKETS-1;
+    lists[b].push(px,py, s);
+  }
+  for (let b=0;b<BUCKETS;b++){
+    ctx.fillStyle=cols[b]; const L=lists[b];
+    for (let i=0;i<L.length;i+=3){ const r=L[i+2]*.0028+.5; ctx.fillRect(L[i],L[i+1],r,r); }
+  }
+  ctx.fillStyle='#fff'; ctx.shadowColor='#d6ff3a'; ctx.shadowBlur=8;
+  for (let i=0;i<hot.length;i+=2) ctx.fillRect(hot[i],hot[i+1],1.8,1.8);
+  ctx.shadowBlur=0;
+  // HUD readout
+  const gx=(mx-.5)*2.4, gz=(my-.5)*2.4;
+  hE.textContent = fmt(178000 + mx*1200 + Math.sin(t)*.02);
+  hN.textContent = fmt(663000 + (1-my)*900);
+  hH.textContent = (780 + h(gx,gz)*60).toFixed(1)+' m';
+}
+requestAnimationFrame(frame);
+
+/* ---------- CROSSHAIR CURSOR ---------- */
+if (fine && !reduce){
+  document.body.classList.add('has-xh');
+  const xh=document.querySelector('.xh'), lab=document.querySelector('.xh-label');
+  let x=0,y=0,cx=0,cy=0;
+  addEventListener('pointermove', e => { x=e.clientX; y=e.clientY; xh.style.opacity=1; lab.style.opacity=1; });
+  document.addEventListener('pointerleave', () => { xh.style.opacity=0; lab.style.opacity=0; });
+  document.querySelectorAll('a,button,.card').forEach(el => {
+    el.addEventListener('pointerenter', () => xh.classList.add('big'));
+    el.addEventListener('pointerleave', () => xh.classList.remove('big'));
+  });
+  (function loop(){ cx+=(x-cx)*.22; cy+=(y-cy)*.22;
+    xh.style.transform=`translate(${cx}px,${cy}px)`;
+    lab.style.transform=`translate(${cx+20}px,${cy+16}px)`;
+    lab.textContent = `${(31.2+cy/4000).toFixed(4)}°N  ${(34.8+cx/4000).toFixed(4)}°E`;
+    requestAnimationFrame(loop); })();
+}
+
+/* card spotlight */
+document.querySelectorAll('.card').forEach(c => c.addEventListener('pointermove', e => {
+  const r=c.getBoundingClientRect(); c.style.setProperty('--mx',(e.clientX-r.left)+'px'); c.style.setProperty('--my',(e.clientY-r.top)+'px');
+}));
+
+/* ---------- REVEAL + COUNTERS ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in'); io.unobserve(e.target);
+  e.target.querySelectorAll('[data-to]').forEach(count);
+}), {threshold:.2});
+document.querySelectorAll('.reveal,.feature').forEach((el,i) => { el.style.transitionDelay = (i%3)*.08+'s'; io.observe(el); });
+function count(el){
+  const to=+el.dataset.to, plain='plain' in el.dataset, plus='plus' in el.dataset, from = plain ? to-60 : 0, dur=1800, s=performance.now();
+  const f = n => (plain ? String(n) : n.toLocaleString('en-US')) + (plus?'+':'');
+  if (reduce) { el.textContent=f(to); return; }
+  (function step(now){ const p=Math.min(1,(now-s)/dur), e=1-Math.pow(1-p,4); el.textContent=f(Math.round(from+(to-from)*e)); if(p<1) requestAnimationFrame(step); })(s);
+}
+
+/* ---------- LAYERS SCROLL ---------- */
+const layers=document.getElementById('layers'), stack=document.getElementById('stack'),
+      planes=[...stack.querySelectorAll('.plane')], steps=[...document.querySelectorAll('.lstep')], prog=[...document.querySelectorAll('.lprog i')];
+const wide = () => innerWidth > 1080;
+function onLayers(){
+  if (!wide()){ stack.style.setProperty('--gap','70px'); planes.forEach(p=>{p.classList.remove('dim');p.style.setProperty('--tagop',1)}); return; }
+  const r=layers.getBoundingClientRect(), total=r.height-innerHeight, p=Math.max(0,Math.min(1,-r.top/total));
+  const gap = 10 + Math.min(1,p*1.6)*80;
+  stack.style.setProperty('--gap', gap+'px');
+  stack.style.transform = `translateY(${gap*1.15}px) rotateX(${58-p*8}deg) rotateZ(${-38+p*14}deg)`;
+  const active = Math.min(3, Math.floor(p*4.0001));
+  steps.forEach((s,i)=>s.classList.toggle('on', i===active));
+  planes.forEach((pl,i)=>{ pl.classList.toggle('dim', i>active); pl.style.setProperty('--tagop', i<=active?1:0); pl.style.borderColor = i===active?'#d6ff3a':''; });
+  prog.forEach((el,i)=>el.style.setProperty('--f', Math.max(0,Math.min(1,p*4-i))));
+}
+addEventListener('scroll', onLayers, {passive:true}); addEventListener('resize', onLayers); onLayers();
+
+/* ---------- CTA CONTOURS ---------- */
+const cc=document.getElementById('contour'), c2=cc.getContext('2d'); let cw,ch,ctaVis=false;
+function csize(){ const d=Math.min(devicePixelRatio||1,2); cw=cc.clientWidth; ch=cc.clientHeight; cc.width=cw*d; cc.height=ch*d; c2.setTransform(d,0,0,d,0,0); }
+csize(); addEventListener('resize', csize);
+new IntersectionObserver(([e]) => ctaVis=e.isIntersecting).observe(cc);
+const f2 = (x,y,t) => Math.sin(x*.006+t*.3)+Math.cos(y*.008-t*.2)+Math.sin((x+y)*.004+t*.15)*1.2;
+(function draw(now){
+  requestAnimationFrame(draw); if(!ctaVis) return;
+  const t = reduce ? 0 : now/1000, step=14;
+  c2.clearRect(0,0,cw,ch);
+  // marching squares on a coarse grid
+  const cols=Math.ceil(cw/step)+1, rows=Math.ceil(ch/step)+1, v=new Float32Array(cols*rows);
+  for(let j=0;j<rows;j++) for(let i=0;i<cols;i++) v[j*cols+i]=f2(i*step,j*step,t);
+  for (let L=-2.4; L<=2.4; L+=.4){
+    c2.strokeStyle = Math.abs(L)<.01 ? 'rgba(214,255,58,.55)' : 'rgba(214,255,58,.16)'; c2.lineWidth=1; c2.beginPath();
+    for(let j=0;j<rows-1;j++) for(let i=0;i<cols-1;i++){
+      const a=v[j*cols+i], b=v[j*cols+i+1], c=v[(j+1)*cols+i+1], d=v[(j+1)*cols+i];
+      const x=i*step, y=j*step, pts=[];
+      if((a<L)!==(b<L)) pts.push(x+step*(L-a)/(b-a), y);
+      if((b<L)!==(c<L)) pts.push(x+step, y+step*(L-b)/(c-b));
+      if((d<L)!==(c<L)) pts.push(x+step*(L-d)/(c-d), y+step);
+      if((a<L)!==(d<L)) pts.push(x, y+step*(L-a)/(d-a));
+      for(let k=0;k+3<pts.length;k+=4){ c2.moveTo(pts[k],pts[k+1]); c2.lineTo(pts[k+2],pts[k+3]); }
+    }
+    c2.stroke();
+  }
+})(0);
+})();
+</script>
+</body>
+</html>
