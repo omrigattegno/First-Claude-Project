@@ -3,6 +3,370 @@
   "name": "Sports",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Football",
+      "difficulty": 1,
+      "aliases": [
+        "soccer"
+      ]
+    },
+    {
+      "word": "Basketball",
+      "difficulty": 1,
+      "aliases": [
+        "basket ball",
+        "hoops",
+        "NBA"
+      ]
+    },
+    {
+      "word": "Tennis",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Swimming",
+      "difficulty": 1,
+      "aliases": [
+        "swim"
+      ]
+    },
+    {
+      "word": "Running",
+      "difficulty": 1,
+      "aliases": [
+        "jogging",
+        "run"
+      ]
+    },
+    {
+      "word": "Boxing",
+      "difficulty": 1,
+      "aliases": [
+        "box"
+      ]
+    },
+    {
+      "word": "Golf",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Baseball",
+      "difficulty": 1,
+      "aliases": [
+        "base ball"
+      ]
+    },
+    {
+      "word": "Volleyball",
+      "difficulty": 1,
+      "aliases": [
+        "volley ball",
+        "beach volleyball"
+      ]
+    },
+    {
+      "word": "Cycling",
+      "difficulty": 1,
+      "aliases": [
+        "biking",
+        "bike riding",
+        "bicycle"
+      ]
+    },
+    {
+      "word": "Skiing",
+      "difficulty": 1,
+      "aliases": [
+        "ski"
+      ]
+    },
+    {
+      "word": "Chess",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Yoga",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Surfing",
+      "difficulty": 1,
+      "aliases": [
+        "surf"
+      ]
+    },
+    {
+      "word": "Bowling",
+      "difficulty": 1,
+      "aliases": [
+        "ten pin bowling"
+      ]
+    },
+    {
+      "word": "Ping pong",
+      "difficulty": 1,
+      "aliases": [
+        "table tennis",
+        "pingpong"
+      ]
+    },
+    {
+      "word": "Marathon",
+      "difficulty": 1,
+      "aliases": [
+        "marathon running"
+      ]
+    },
+    {
+      "word": "Gymnastics",
+      "difficulty": 1,
+      "aliases": [
+        "gymnastic"
+      ]
+    },
+    {
+      "word": "Hockey",
+      "difficulty": 1,
+      "aliases": [
+        "ice hockey",
+        "field hockey"
+      ]
+    },
+    {
+      "word": "Olympics",
+      "difficulty": 1,
+      "aliases": [
+        "Olympic Games"
+      ]
+    },
+    {
+      "word": "Karate",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Rugby",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Cricket",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Wrestling",
+      "difficulty": 2,
+      "aliases": [
+        "wrestle",
+        "WWE"
+      ]
+    },
+    {
+      "word": "Fencing",
+      "difficulty": 2,
+      "aliases": [
+        "sword fighting"
+      ]
+    },
+    {
+      "word": "Archery",
+      "difficulty": 2,
+      "aliases": [
+        "bow and arrow"
+      ]
+    },
+    {
+      "word": "Rowing",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Judo",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Snowboarding",
+      "difficulty": 2,
+      "aliases": [
+        "snowboard"
+      ]
+    },
+    {
+      "word": "Skateboarding",
+      "difficulty": 2,
+      "aliases": [
+        "skateboard",
+        "skating"
+      ]
+    },
+    {
+      "word": "Horse riding",
+      "difficulty": 2,
+      "aliases": [
+        "horseback riding",
+        "equestrian",
+        "riding"
+      ]
+    },
+    {
+      "word": "Badminton",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Water polo",
+      "difficulty": 2,
+      "aliases": [
+        "waterpolo"
+      ]
+    },
+    {
+      "word": "Formula 1",
+      "difficulty": 2,
+      "aliases": [
+        "F1",
+        "Formula One",
+        "Grand Prix"
+      ]
+    },
+    {
+      "word": "Triathlon",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Diving",
+      "difficulty": 2,
+      "aliases": [
+        "scuba diving",
+        "scuba"
+      ]
+    },
+    {
+      "word": "Rock climbing",
+      "difficulty": 2,
+      "aliases": [
+        "climbing",
+        "bouldering"
+      ]
+    },
+    {
+      "word": "Ice skating",
+      "difficulty": 2,
+      "aliases": [
+        "figure skating",
+        "skating on ice"
+      ]
+    },
+    {
+      "word": "Handball",
+      "difficulty": 2,
+      "aliases": [
+        "hand ball"
+      ]
+    },
+    {
+      "word": "Sailing",
+      "difficulty": 2,
+      "aliases": [
+        "yachting"
+      ]
+    },
+    {
+      "word": "Darts",
+      "difficulty": 2,
+      "aliases": [
+        "dart"
+      ]
+    },
+    {
+      "word": "Pilates",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Squash",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "American football",
+      "difficulty": 2,
+      "aliases": [
+        "NFL",
+        "gridiron"
+      ]
+    },
+    {
+      "word": "Curling",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Polo",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Lacrosse",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Biathlon",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Sumo wrestling",
+      "difficulty": 3,
+      "aliases": [
+        "sumo"
+      ]
+    },
+    {
+      "word": "Pole vault",
+      "difficulty": 3,
+      "aliases": [
+        "pole vaulting"
+      ]
+    },
+    {
+      "word": "Parkour",
+      "difficulty": 3,
+      "aliases": [
+        "free running",
+        "freerunning"
+      ]
+    },
+    {
+      "word": "Bungee jumping",
+      "difficulty": 3,
+      "aliases": [
+        "bungee",
+        "bungy jumping"
+      ]
+    },
+    {
+      "word": "Kitesurfing",
+      "difficulty": 3,
+      "aliases": [
+        "kite surfing",
+        "kiteboarding"
+      ]
+    },
+    {
+      "word": "Taekwondo",
+      "difficulty": 3,
+      "aliases": [
+        "tae kwon do"
+      ]
+    }
   ]
 }

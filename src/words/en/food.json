@@ -3,6 +3,391 @@
   "name": "Food",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Pizza",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Hamburger",
+      "difficulty": 1,
+      "aliases": [
+        "burger",
+        "burgers"
+      ]
+    },
+    {
+      "word": "Pasta",
+      "difficulty": 1,
+      "aliases": [
+        "spaghetti",
+        "noodles"
+      ]
+    },
+    {
+      "word": "Sushi",
+      "difficulty": 1,
+      "aliases": [
+        "maki",
+        "sushi roll"
+      ]
+    },
+    {
+      "word": "Chocolate",
+      "difficulty": 1,
+      "aliases": [
+        "chocolate bar"
+      ]
+    },
+    {
+      "word": "Ice cream",
+      "difficulty": 1,
+      "aliases": [
+        "icecream",
+        "gelato"
+      ]
+    },
+    {
+      "word": "Bread",
+      "difficulty": 1,
+      "aliases": [
+        "loaf",
+        "loaf of bread"
+      ]
+    },
+    {
+      "word": "Cheese",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Salad",
+      "difficulty": 1,
+      "aliases": [
+        "green salad"
+      ]
+    },
+    {
+      "word": "Soup",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Rice",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Chicken",
+      "difficulty": 1,
+      "aliases": [
+        "roast chicken",
+        "fried chicken"
+      ]
+    },
+    {
+      "word": "Eggs",
+      "difficulty": 1,
+      "aliases": [
+        "egg",
+        "fried egg",
+        "scrambled eggs"
+      ]
+    },
+    {
+      "word": "Apple",
+      "difficulty": 1,
+      "aliases": [
+        "apples"
+      ]
+    },
+    {
+      "word": "Banana",
+      "difficulty": 1,
+      "aliases": [
+        "bananas"
+      ]
+    },
+    {
+      "word": "French fries",
+      "difficulty": 1,
+      "aliases": [
+        "fries",
+        "chips"
+      ]
+    },
+    {
+      "word": "Sandwich",
+      "difficulty": 1,
+      "aliases": [
+        "sandwiches",
+        "sub"
+      ]
+    },
+    {
+      "word": "Cake",
+      "difficulty": 1,
+      "aliases": [
+        "birthday cake"
+      ]
+    },
+    {
+      "word": "Cookies",
+      "difficulty": 1,
+      "aliases": [
+        "cookie",
+        "biscuit",
+        "biscuits"
+      ]
+    },
+    {
+      "word": "Popcorn",
+      "difficulty": 1,
+      "aliases": [
+        "pop corn"
+      ]
+    },
+    {
+      "word": "Hot dog",
+      "difficulty": 1,
+      "aliases": [
+        "hotdog",
+        "hot dogs",
+        "frankfurter"
+      ]
+    },
+    {
+      "word": "Lasagna",
+      "difficulty": 2,
+      "aliases": [
+        "lasagne"
+      ]
+    },
+    {
+      "word": "Falafel",
+      "difficulty": 2,
+      "aliases": [
+        "falafels"
+      ]
+    },
+    {
+      "word": "Hummus",
+      "difficulty": 2,
+      "aliases": [
+        "houmous",
+        "humus"
+      ]
+    },
+    {
+      "word": "Tacos",
+      "difficulty": 2,
+      "aliases": [
+        "taco"
+      ]
+    },
+    {
+      "word": "Pancakes",
+      "difficulty": 2,
+      "aliases": [
+        "pancake",
+        "crepes"
+      ]
+    },
+    {
+      "word": "Waffles",
+      "difficulty": 2,
+      "aliases": [
+        "waffle"
+      ]
+    },
+    {
+      "word": "Steak",
+      "difficulty": 2,
+      "aliases": [
+        "beef steak",
+        "ribeye"
+      ]
+    },
+    {
+      "word": "Burrito",
+      "difficulty": 2,
+      "aliases": [
+        "burritos"
+      ]
+    },
+    {
+      "word": "Croissant",
+      "difficulty": 2,
+      "aliases": [
+        "croissants"
+      ]
+    },
+    {
+      "word": "Ramen",
+      "difficulty": 2,
+      "aliases": [
+        "ramen noodles"
+      ]
+    },
+    {
+      "word": "Dumplings",
+      "difficulty": 2,
+      "aliases": [
+        "dumpling",
+        "gyoza"
+      ]
+    },
+    {
+      "word": "Cereal",
+      "difficulty": 2,
+      "aliases": [
+        "cereals",
+        "cornflakes",
+        "corn flakes"
+      ]
+    },
+    {
+      "word": "Bagel",
+      "difficulty": 2,
+      "aliases": [
+        "bagels"
+      ]
+    },
+    {
+      "word": "Pretzel",
+      "difficulty": 2,
+      "aliases": [
+        "pretzels"
+      ]
+    },
+    {
+      "word": "Omelette",
+      "difficulty": 2,
+      "aliases": [
+        "omelet",
+        "omelettes"
+      ]
+    },
+    {
+      "word": "Meatballs",
+      "difficulty": 2,
+      "aliases": [
+        "meatball"
+      ]
+    },
+    {
+      "word": "Schnitzel",
+      "difficulty": 2,
+      "aliases": [
+        "chicken schnitzel",
+        "wiener schnitzel"
+      ]
+    },
+    {
+      "word": "Shawarma",
+      "difficulty": 2,
+      "aliases": [
+        "shwarma",
+        "doner",
+        "doner kebab"
+      ]
+    },
+    {
+      "word": "Risotto",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Cheesecake",
+      "difficulty": 2,
+      "aliases": [
+        "cheese cake"
+      ]
+    },
+    {
+      "word": "Donut",
+      "difficulty": 2,
+      "aliases": [
+        "doughnut",
+        "donuts",
+        "doughnuts"
+      ]
+    },
+    {
+      "word": "Watermelon",
+      "difficulty": 2,
+      "aliases": [
+        "water melon",
+        "watermelons"
+      ]
+    },
+    {
+      "word": "Espresso",
+      "difficulty": 3,
+      "aliases": [
+        "expresso",
+        "espresso shot"
+      ]
+    },
+    {
+      "word": "Tiramisu",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Paella",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Gnocchi",
+      "difficulty": 3,
+      "aliases": [
+        "gnocci"
+      ]
+    },
+    {
+      "word": "Kimchi",
+      "difficulty": 3,
+      "aliases": [
+        "kimchee"
+      ]
+    },
+    {
+      "word": "Baklava",
+      "difficulty": 3,
+      "aliases": [
+        "baklawa"
+      ]
+    },
+    {
+      "word": "Pad thai",
+      "difficulty": 3,
+      "aliases": [
+        "padthai"
+      ]
+    },
+    {
+      "word": "Guacamole",
+      "difficulty": 3,
+      "aliases": [
+        "guac"
+      ]
+    },
+    {
+      "word": "Shakshuka",
+      "difficulty": 3,
+      "aliases": [
+        "shakshouka",
+        "shakshukah"
+      ]
+    },
+    {
+      "word": "Bruschetta",
+      "difficulty": 3,
+      "aliases": [
+        "bruschette"
+      ]
+    }
   ]
 }

@@ -80,4 +80,7 @@ No external fonts (offline): the system font stack is in tokens.css.
 - Mobile first (375px wide), dark theme, 48px minimum tap targets, safe-area insets (`.screen`).
 - Pure logic goes in `src/game` with tests; screens stay thin.
 - Run `npx tsc --noEmit` and `npx vitest run` before finishing. `npm run build` does typecheck + Vite build.
+- End-to-end: `npm run build && npx playwright test` (e2e/, mobile Chromium against `vite preview`). Screens
+  and controls carry `data-testid` attributes (`home-play`, `setup-start`, `secret-card`, `hold-button`,
+  `ballot-opt`, ...); keep them when restyling. `npm run test:e2e:screenshots` captures review PNGs.
 - Deps are installed; do not run `npm install` from parallel builders.

@@ -3,6 +3,417 @@
   "name": "Animals",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Dog",
+      "difficulty": 1,
+      "aliases": [
+        "puppy",
+        "dogs"
+      ]
+    },
+    {
+      "word": "Cat",
+      "difficulty": 1,
+      "aliases": [
+        "kitten",
+        "cats",
+        "kitty"
+      ]
+    },
+    {
+      "word": "Cow",
+      "difficulty": 1,
+      "aliases": [
+        "cows",
+        "cattle"
+      ]
+    },
+    {
+      "word": "Horse",
+      "difficulty": 1,
+      "aliases": [
+        "horses",
+        "pony"
+      ]
+    },
+    {
+      "word": "Lion",
+      "difficulty": 1,
+      "aliases": [
+        "lions",
+        "lioness"
+      ]
+    },
+    {
+      "word": "Elephant",
+      "difficulty": 1,
+      "aliases": [
+        "elephants"
+      ]
+    },
+    {
+      "word": "Monkey",
+      "difficulty": 1,
+      "aliases": [
+        "monkeys",
+        "ape",
+        "chimp",
+        "chimpanzee"
+      ]
+    },
+    {
+      "word": "Fish",
+      "difficulty": 1,
+      "aliases": [
+        "fishes",
+        "goldfish"
+      ]
+    },
+    {
+      "word": "Bird",
+      "difficulty": 1,
+      "aliases": [
+        "birds"
+      ]
+    },
+    {
+      "word": "Chicken",
+      "difficulty": 1,
+      "aliases": [
+        "hen",
+        "rooster",
+        "chickens"
+      ]
+    },
+    {
+      "word": "Pig",
+      "difficulty": 1,
+      "aliases": [
+        "pigs",
+        "hog",
+        "piglet"
+      ]
+    },
+    {
+      "word": "Sheep",
+      "difficulty": 1,
+      "aliases": [
+        "lamb",
+        "ewe"
+      ]
+    },
+    {
+      "word": "Mouse",
+      "difficulty": 1,
+      "aliases": [
+        "mice"
+      ]
+    },
+    {
+      "word": "Rabbit",
+      "difficulty": 1,
+      "aliases": [
+        "bunny",
+        "rabbits",
+        "hare"
+      ]
+    },
+    {
+      "word": "Snake",
+      "difficulty": 1,
+      "aliases": [
+        "snakes",
+        "serpent"
+      ]
+    },
+    {
+      "word": "Bear",
+      "difficulty": 1,
+      "aliases": [
+        "bears",
+        "grizzly"
+      ]
+    },
+    {
+      "word": "Tiger",
+      "difficulty": 1,
+      "aliases": [
+        "tigers"
+      ]
+    },
+    {
+      "word": "Duck",
+      "difficulty": 1,
+      "aliases": [
+        "ducks",
+        "duckling"
+      ]
+    },
+    {
+      "word": "Frog",
+      "difficulty": 1,
+      "aliases": [
+        "frogs",
+        "toad"
+      ]
+    },
+    {
+      "word": "Shark",
+      "difficulty": 1,
+      "aliases": [
+        "sharks"
+      ]
+    },
+    {
+      "word": "Butterfly",
+      "difficulty": 1,
+      "aliases": [
+        "butterflies"
+      ]
+    },
+    {
+      "word": "Giraffe",
+      "difficulty": 2,
+      "aliases": [
+        "giraffes"
+      ]
+    },
+    {
+      "word": "Zebra",
+      "difficulty": 2,
+      "aliases": [
+        "zebras"
+      ]
+    },
+    {
+      "word": "Kangaroo",
+      "difficulty": 2,
+      "aliases": [
+        "kangaroos",
+        "roo"
+      ]
+    },
+    {
+      "word": "Penguin",
+      "difficulty": 2,
+      "aliases": [
+        "penguins"
+      ]
+    },
+    {
+      "word": "Dolphin",
+      "difficulty": 2,
+      "aliases": [
+        "dolphins"
+      ]
+    },
+    {
+      "word": "Crocodile",
+      "difficulty": 2,
+      "aliases": [
+        "croc",
+        "alligator",
+        "crocodiles",
+        "gator"
+      ]
+    },
+    {
+      "word": "Eagle",
+      "difficulty": 2,
+      "aliases": [
+        "eagles"
+      ]
+    },
+    {
+      "word": "Owl",
+      "difficulty": 2,
+      "aliases": [
+        "owls"
+      ]
+    },
+    {
+      "word": "Camel",
+      "difficulty": 2,
+      "aliases": [
+        "camels",
+        "dromedary"
+      ]
+    },
+    {
+      "word": "Wolf",
+      "difficulty": 2,
+      "aliases": [
+        "wolves"
+      ]
+    },
+    {
+      "word": "Fox",
+      "difficulty": 2,
+      "aliases": [
+        "foxes"
+      ]
+    },
+    {
+      "word": "Gorilla",
+      "difficulty": 2,
+      "aliases": [
+        "gorillas"
+      ]
+    },
+    {
+      "word": "Hippo",
+      "difficulty": 2,
+      "aliases": [
+        "hippopotamus",
+        "hippos"
+      ]
+    },
+    {
+      "word": "Turtle",
+      "difficulty": 2,
+      "aliases": [
+        "tortoise",
+        "turtles"
+      ]
+    },
+    {
+      "word": "Octopus",
+      "difficulty": 2,
+      "aliases": [
+        "octopi",
+        "octopuses"
+      ]
+    },
+    {
+      "word": "Parrot",
+      "difficulty": 2,
+      "aliases": [
+        "parrots"
+      ]
+    },
+    {
+      "word": "Bee",
+      "difficulty": 2,
+      "aliases": [
+        "bees",
+        "honeybee",
+        "bumblebee"
+      ]
+    },
+    {
+      "word": "Spider",
+      "difficulty": 2,
+      "aliases": [
+        "spiders",
+        "tarantula"
+      ]
+    },
+    {
+      "word": "Goat",
+      "difficulty": 2,
+      "aliases": [
+        "goats"
+      ]
+    },
+    {
+      "word": "Deer",
+      "difficulty": 2,
+      "aliases": [
+        "stag",
+        "doe"
+      ]
+    },
+    {
+      "word": "Squirrel",
+      "difficulty": 2,
+      "aliases": [
+        "squirrels"
+      ]
+    },
+    {
+      "word": "Whale",
+      "difficulty": 2,
+      "aliases": [
+        "whales"
+      ]
+    },
+    {
+      "word": "Axolotl",
+      "difficulty": 3,
+      "aliases": [
+        "axolotls",
+        "Mexican walking fish"
+      ]
+    },
+    {
+      "word": "Platypus",
+      "difficulty": 3,
+      "aliases": [
+        "duck-billed platypus",
+        "platypuses"
+      ]
+    },
+    {
+      "word": "Chameleon",
+      "difficulty": 3,
+      "aliases": [
+        "chameleons",
+        "cameleon"
+      ]
+    },
+    {
+      "word": "Hedgehog",
+      "difficulty": 3,
+      "aliases": [
+        "hedgehogs"
+      ]
+    },
+    {
+      "word": "Koala",
+      "difficulty": 3,
+      "aliases": [
+        "koalas",
+        "koala bear"
+      ]
+    },
+    {
+      "word": "Flamingo",
+      "difficulty": 3,
+      "aliases": [
+        "flamingos",
+        "flamingoes"
+      ]
+    },
+    {
+      "word": "Sloth",
+      "difficulty": 3,
+      "aliases": [
+        "sloths"
+      ]
+    },
+    {
+      "word": "Peacock",
+      "difficulty": 3,
+      "aliases": [
+        "peacocks",
+        "peafowl"
+      ]
+    },
+    {
+      "word": "Jellyfish",
+      "difficulty": 3,
+      "aliases": [
+        "jelly fish",
+        "jellyfishes"
+      ]
+    },
+    {
+      "word": "Meerkat",
+      "difficulty": 3,
+      "aliases": [
+        "meerkats",
+        "meercat"
+      ]
+    }
   ]
 }

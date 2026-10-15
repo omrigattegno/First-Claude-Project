@@ -1,8 +1,412 @@
 {
   "id": "famous-people",
-  "name": "Famous People",
+  "name": "Famous people",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Albert Einstein",
+      "difficulty": 1,
+      "aliases": [
+        "Einstein"
+      ]
+    },
+    {
+      "word": "Michael Jackson",
+      "difficulty": 1,
+      "aliases": [
+        "MJ",
+        "Jackson",
+        "King of Pop"
+      ]
+    },
+    {
+      "word": "Lionel Messi",
+      "difficulty": 1,
+      "aliases": [
+        "Messi",
+        "Leo Messi"
+      ]
+    },
+    {
+      "word": "Donald Trump",
+      "difficulty": 1,
+      "aliases": [
+        "Trump"
+      ]
+    },
+    {
+      "word": "Barack Obama",
+      "difficulty": 1,
+      "aliases": [
+        "Obama"
+      ]
+    },
+    {
+      "word": "Leonardo DiCaprio",
+      "difficulty": 1,
+      "aliases": [
+        "DiCaprio",
+        "Leo DiCaprio",
+        "Leonardo Di Caprio"
+      ]
+    },
+    {
+      "word": "Elon Musk",
+      "difficulty": 1,
+      "aliases": [
+        "Musk"
+      ]
+    },
+    {
+      "word": "Cristiano Ronaldo",
+      "difficulty": 1,
+      "aliases": [
+        "Ronaldo",
+        "CR7",
+        "Christiano Ronaldo"
+      ]
+    },
+    {
+      "word": "Beyoncé",
+      "difficulty": 1,
+      "aliases": [
+        "Beyonce",
+        "Beyonce Knowles"
+      ]
+    },
+    {
+      "word": "Taylor Swift",
+      "difficulty": 1,
+      "aliases": [
+        "Swift",
+        "Tay Tay"
+      ]
+    },
+    {
+      "word": "Queen Elizabeth II",
+      "difficulty": 1,
+      "aliases": [
+        "Queen Elizabeth",
+        "Elizabeth II",
+        "The Queen",
+        "Elizabeth the Second"
+      ]
+    },
+    {
+      "word": "Brad Pitt",
+      "difficulty": 1,
+      "aliases": [
+        "Pitt"
+      ]
+    },
+    {
+      "word": "Madonna",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Napoleon",
+      "difficulty": 1,
+      "aliases": [
+        "Napoleon Bonaparte",
+        "Bonaparte"
+      ]
+    },
+    {
+      "word": "William Shakespeare",
+      "difficulty": 1,
+      "aliases": [
+        "Shakespeare"
+      ]
+    },
+    {
+      "word": "Bill Gates",
+      "difficulty": 1,
+      "aliases": [
+        "Gates"
+      ]
+    },
+    {
+      "word": "Oprah Winfrey",
+      "difficulty": 1,
+      "aliases": [
+        "Oprah"
+      ]
+    },
+    {
+      "word": "Michael Jordan",
+      "difficulty": 1,
+      "aliases": [
+        "Jordan",
+        "MJ"
+      ]
+    },
+    {
+      "word": "Marilyn Monroe",
+      "difficulty": 1,
+      "aliases": [
+        "Monroe",
+        "Marilyn"
+      ]
+    },
+    {
+      "word": "Charlie Chaplin",
+      "difficulty": 1,
+      "aliases": [
+        "Chaplin"
+      ]
+    },
+    {
+      "word": "Elvis Presley",
+      "difficulty": 1,
+      "aliases": [
+        "Elvis",
+        "Presley",
+        "The King"
+      ]
+    },
+    {
+      "word": "Leonardo da Vinci",
+      "difficulty": 2,
+      "aliases": [
+        "Da Vinci",
+        "Leonardo",
+        "Davinci"
+      ]
+    },
+    {
+      "word": "Mozart",
+      "difficulty": 2,
+      "aliases": [
+        "Wolfgang Amadeus Mozart",
+        "Amadeus"
+      ]
+    },
+    {
+      "word": "Pablo Picasso",
+      "difficulty": 2,
+      "aliases": [
+        "Picasso"
+      ]
+    },
+    {
+      "word": "Isaac Newton",
+      "difficulty": 2,
+      "aliases": [
+        "Newton"
+      ]
+    },
+    {
+      "word": "Nelson Mandela",
+      "difficulty": 2,
+      "aliases": [
+        "Mandela",
+        "Madiba"
+      ]
+    },
+    {
+      "word": "Mahatma Gandhi",
+      "difficulty": 2,
+      "aliases": [
+        "Gandhi",
+        "Ghandi"
+      ]
+    },
+    {
+      "word": "Steve Jobs",
+      "difficulty": 2,
+      "aliases": [
+        "Jobs"
+      ]
+    },
+    {
+      "word": "Vladimir Putin",
+      "difficulty": 2,
+      "aliases": [
+        "Putin"
+      ]
+    },
+    {
+      "word": "Usain Bolt",
+      "difficulty": 2,
+      "aliases": [
+        "Bolt"
+      ]
+    },
+    {
+      "word": "Serena Williams",
+      "difficulty": 2,
+      "aliases": [
+        "Serena"
+      ]
+    },
+    {
+      "word": "Tom Hanks",
+      "difficulty": 2,
+      "aliases": [
+        "Hanks"
+      ]
+    },
+    {
+      "word": "Lady Gaga",
+      "difficulty": 2,
+      "aliases": [
+        "Gaga"
+      ]
+    },
+    {
+      "word": "Mark Zuckerberg",
+      "difficulty": 2,
+      "aliases": [
+        "Zuckerberg",
+        "Zuck"
+      ]
+    },
+    {
+      "word": "Winston Churchill",
+      "difficulty": 2,
+      "aliases": [
+        "Churchill"
+      ]
+    },
+    {
+      "word": "Abraham Lincoln",
+      "difficulty": 2,
+      "aliases": [
+        "Lincoln",
+        "Abe Lincoln"
+      ]
+    },
+    {
+      "word": "Marie Curie",
+      "difficulty": 2,
+      "aliases": [
+        "Curie",
+        "Madame Curie"
+      ]
+    },
+    {
+      "word": "Freddie Mercury",
+      "difficulty": 2,
+      "aliases": [
+        "Mercury",
+        "Freddy Mercury"
+      ]
+    },
+    {
+      "word": "Muhammad Ali",
+      "difficulty": 2,
+      "aliases": [
+        "Ali",
+        "Mohammed Ali",
+        "Cassius Clay"
+      ]
+    },
+    {
+      "word": "Stephen Hawking",
+      "difficulty": 2,
+      "aliases": [
+        "Hawking",
+        "Steven Hawking"
+      ]
+    },
+    {
+      "word": "Pelé",
+      "difficulty": 2,
+      "aliases": [
+        "Pele"
+      ]
+    },
+    {
+      "word": "Gal Gadot",
+      "difficulty": 2,
+      "aliases": [
+        "Gadot",
+        "Wonder Woman"
+      ]
+    },
+    {
+      "word": "Keanu Reeves",
+      "difficulty": 2,
+      "aliases": [
+        "Reeves",
+        "Keanu"
+      ]
+    },
+    {
+      "word": "Vincent van Gogh",
+      "difficulty": 3,
+      "aliases": [
+        "Van Gogh",
+        "Van Gough",
+        "Vincent Van Gough"
+      ]
+    },
+    {
+      "word": "Nikola Tesla",
+      "difficulty": 3,
+      "aliases": [
+        "Tesla"
+      ]
+    },
+    {
+      "word": "Frida Kahlo",
+      "difficulty": 3,
+      "aliases": [
+        "Frida",
+        "Kahlo",
+        "Frida Khalo"
+      ]
+    },
+    {
+      "word": "Charles Darwin",
+      "difficulty": 3,
+      "aliases": [
+        "Darwin"
+      ]
+    },
+    {
+      "word": "Sigmund Freud",
+      "difficulty": 3,
+      "aliases": [
+        "Freud"
+      ]
+    },
+    {
+      "word": "Golda Meir",
+      "difficulty": 3,
+      "aliases": [
+        "Golda"
+      ]
+    },
+    {
+      "word": "Theodor Herzl",
+      "difficulty": 3,
+      "aliases": [
+        "Herzl",
+        "Theodore Herzl",
+        "Benjamin Zeev Herzl"
+      ]
+    },
+    {
+      "word": "Cleopatra",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Beethoven",
+      "difficulty": 3,
+      "aliases": [
+        "Ludwig van Beethoven"
+      ]
+    },
+    {
+      "word": "Salvador Dalí",
+      "difficulty": 3,
+      "aliases": [
+        "Dali",
+        "Salvador Dali"
+      ]
+    }
   ]
 }

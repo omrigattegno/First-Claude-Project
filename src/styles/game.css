@@ -1,0 +1,774 @@
+/* In-round screens: Pass-to, Reveal, Clues, Discussion, Vote, Guess, Results, GameMenu.
+   Dark, calm, huge type the table reads from a distance. Logical properties only so RTL mirrors. */
+
+/* ---------- layout helpers ---------- */
+.game-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.game-spacer {
+  flex: 1 1 auto;
+}
+.game-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--tap);
+  margin-bottom: var(--space-2);
+}
+.game-chrome__label,
+.pass__progress {
+  color: var(--text-faint);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.game-menu__trigger {
+  font-size: var(--fs-xl);
+  line-height: 1;
+  color: var(--text-muted);
+  min-width: var(--tap);
+  padding: 0 var(--space-2);
+}
+.game-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+.game-actions__row {
+  display: flex;
+  gap: var(--space-2);
+}
+.game-actions__row > .btn {
+  flex: 1 1 0;
+  padding-inline: var(--space-2);
+}
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: var(--space-4);
+}
+.card__title {
+  font-size: var(--fs-s);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+.card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 32px;
+}
+.card__row + .card__row {
+  border-top: 1px solid var(--line);
+}
+.muted {
+  color: var(--text-muted);
+}
+.text-center {
+  text-align: center;
+}
+.faint {
+  color: var(--text-faint);
+}
+.badge {
+  display: inline-block;
+  margin-inline-start: var(--space-2);
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge--imposter {
+  background: color-mix(in srgb, var(--danger) 22%, transparent);
+  color: var(--danger);
+}
+
+/* ---------- ring ---------- */
+.ring {
+  position: relative;
+  width: var(--ring-size, 120px);
+  height: var(--ring-size, 120px);
+  display: inline-block;
+  flex: 0 0 auto;
+}
+.ring__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform: rotate(-90deg);
+}
+.ring__track {
+  fill: none;
+  stroke: var(--line-strong);
+}
+.ring__fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 120ms linear, stroke 300ms;
+}
+.ring--danger .ring__fill {
+  stroke: var(--danger);
+}
+.ring__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* ---------- pass-to ---------- */
+.pass {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+  animation: fade-in 240ms var(--ease);
+}
+.pass__label {
+  color: var(--text-muted);
+  font-size: var(--fs-l);
+  font-weight: 600;
+}
+.pass__name {
+  font-size: var(--fs-xxl);
+  font-weight: 800;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  max-width: 100%;
+  padding-inline: var(--space-2);
+}
+.pass__hint {
+  color: var(--text-muted);
+  max-width: 30ch;
+  text-wrap: balance;
+}
+.pass__ring {
+  margin-top: var(--space-3);
+}
+.pass__count {
+  font-size: 48px;
+}
+
+/* ---------- secret card (reveal / vote) ---------- */
+.secret-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 40dvh;
+  /* extra top padding keeps the absolutely positioned name line clear of a tall ballot */
+  padding: calc(var(--space-5) + 20px) var(--space-4) var(--space-5);
+  border-radius: var(--radius-l);
+  background: var(--card-secret-bg);
+  color: var(--card-secret-text);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  text-align: center;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+.secret-card__name {
+  position: absolute;
+  top: var(--space-3);
+  inset-inline: var(--space-4);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.secret-card__body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: filter 150ms var(--ease), opacity 150ms var(--ease);
+  filter: blur(0);
+  opacity: 1;
+}
+.secret-card.is-hidden .secret-card__body {
+  filter: blur(14px);
+  opacity: 0.35;
+}
+.secret-card__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 70%;
+}
+.secret-card__placeholder span {
+  display: block;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--text-faint);
+  width: 100%;
+}
+.secret-card__placeholder span:nth-child(2) {
+  width: 55%;
+}
+.secret-card__placeholder span:nth-child(3) {
+  width: 80%;
+}
+.secret-card__label {
+  font-size: var(--fs-s);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.secret-word {
+  font-size: var(--fs-word);
+  font-weight: 800;
+  line-height: 1.12;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  padding-inline: var(--space-1);
+}
+.secret-word--long {
+  font-size: clamp(30px, 8.5vw, 52px);
+}
+.secret-word--xlong {
+  font-size: clamp(24px, 6.8vw, 42px);
+}
+.secret-word--imposter {
+  color: var(--danger);
+  letter-spacing: 0.04em;
+}
+.secret-card__sub {
+  color: var(--text-muted);
+  font-size: var(--fs-m);
+}
+.secret-card__note {
+  color: var(--text-faint);
+  font-size: var(--fs-s);
+  margin-top: var(--space-2);
+}
+
+/* ---------- reveal controls ---------- */
+.reveal-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+.reveal-controls__hint {
+  color: var(--text-muted);
+  max-width: 32ch;
+  text-wrap: balance;
+}
+.reveal-controls__fallback {
+  min-height: var(--tap);
+  color: var(--text-faint);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hold-btn {
+  width: 100%;
+  min-height: 96px;
+  border-radius: var(--radius-l);
+  background: var(--bg-elev-2);
+  color: var(--text);
+  border: 2px dashed var(--line-strong);
+  font-size: var(--fs-l);
+  font-weight: 700;
+  transition: background 120ms var(--ease), border-color 120ms var(--ease), transform 120ms var(--ease);
+}
+.hold-btn.is-active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-style: solid;
+  border-color: var(--accent);
+  transform: scale(0.98);
+}
+.hold-btn:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+.reveal__pass {
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.reveal__pass .btn {
+  animation: rise-in 220ms var(--ease);
+}
+
+/* ---------- clues ---------- */
+.clues__round {
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: center;
+}
+.clues__speaker {
+  text-align: center;
+  padding-block: var(--space-4);
+}
+.clues__speaker-label {
+  color: var(--text-muted);
+  font-size: var(--fs-l);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+.clues__speaker-name {
+  font-size: var(--fs-xxl);
+  font-weight: 800;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.clues__hint {
+  text-align: center;
+  color: var(--text-muted);
+  max-width: 34ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+.turn-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.turn-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding-inline: var(--space-2) var(--space-3);
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--text-muted);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  transition: background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+}
+.turn-chip__n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg-elev-2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.turn-chip.is-done {
+  color: var(--text-faint);
+}
+.turn-chip.is-done .turn-chip__n {
+  background: color-mix(in srgb, var(--success) 25%, transparent);
+  color: var(--success);
+}
+.turn-chip.is-current {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--text);
+  transform: scale(1.04);
+}
+.turn-chip.is-current .turn-chip__n {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* ---------- discussion ---------- */
+.discussion {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  text-align: center;
+}
+.discussion__ring .ring__label {
+  font-size: clamp(44px, 14vw, 64px);
+}
+.discussion__ring.is-done .ring__label {
+  font-size: var(--fs-xl);
+  color: var(--danger);
+}
+.discussion__hint {
+  color: var(--text-muted);
+  max-width: 30ch;
+  text-wrap: balance;
+}
+.discussion__timeup {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  color: var(--danger);
+  animation: rise-in 240ms var(--ease);
+}
+
+/* ---------- vote ---------- */
+.ballot {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.ballot__question {
+  font-size: var(--fs-l);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--space-1);
+}
+.ballot__opts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  width: 100%;
+}
+.ballot__opts--two {
+  grid-template-columns: 1fr 1fr;
+}
+.ballot__opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 52px;
+  padding-inline: var(--space-4) var(--space-3);
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev-2);
+  color: var(--text);
+  font-size: var(--fs-m);
+  font-weight: 600;
+  text-align: start;
+  transition: background 120ms var(--ease), border-color 120ms var(--ease), transform 120ms var(--ease);
+}
+.ballot__opt:active {
+  transform: scale(0.98);
+}
+.ballot__opt-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ballot__opt-check {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: transparent;
+}
+.ballot__opt.is-selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, var(--bg-elev-2));
+}
+.ballot__opt.is-selected .ballot__opt-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.vote__lock {
+  min-height: 72px;
+}
+
+/* ---------- guess ---------- */
+.guess__title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  text-align: center;
+}
+.guess__prompt {
+  text-align: center;
+  color: var(--text-muted);
+  text-wrap: balance;
+}
+.guess__category {
+  text-align: center;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+.guess__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.guess__input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  color: var(--text);
+  font-size: var(--fs-l);
+  text-align: center;
+  outline: none;
+}
+.guess__input:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.guess__input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ---------- results ---------- */
+.results__banner {
+  text-align: center;
+  padding: var(--space-5) var(--space-4);
+  border-radius: var(--radius-l);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  animation: rise-in 300ms var(--ease);
+}
+.results__banner--table {
+  border-color: color-mix(in srgb, var(--success) 50%, transparent);
+  background: color-mix(in srgb, var(--success) 12%, var(--bg-elev));
+}
+.results__banner--imposter {
+  border-color: color-mix(in srgb, var(--danger) 50%, transparent);
+  background: color-mix(in srgb, var(--danger) 12%, var(--bg-elev));
+}
+.results__winner {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  line-height: 1.15;
+}
+.results__sub {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+}
+.results__voted {
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+.tally {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tally__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 36px;
+}
+.tally__row + .tally__row {
+  border-top: 1px solid var(--line);
+}
+.tally__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tally__row.is-out .tally__name {
+  font-weight: 700;
+}
+.tally__count {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
+}
+.results__word {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  text-align: center;
+  margin-block: var(--space-2);
+}
+.results__imposters {
+  text-align: center;
+  color: var(--danger);
+  font-weight: 700;
+}
+.results__guess {
+  text-align: center;
+  margin-top: var(--space-3);
+  font-weight: 600;
+}
+.results__guess--correct {
+  color: var(--success);
+}
+.results__guess--wrong {
+  color: var(--text-muted);
+}
+.scoreboard {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.scoreboard__row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-s);
+}
+.scoreboard__row + .scoreboard__row {
+  border-top: 1px solid var(--line);
+}
+.scoreboard__head {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  gap: var(--space-2);
+  padding-inline: var(--space-1);
+  padding-bottom: var(--space-1);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.scoreboard__head .scoreboard__earned,
+.scoreboard__head .scoreboard__total {
+  color: var(--text-faint);
+  font-weight: 600;
+}
+.scoreboard__row.is-leader {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--text);
+}
+.scoreboard__rank {
+  color: var(--text-faint);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.scoreboard__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.scoreboard__earned {
+  min-width: 2.5ch;
+  text-align: end;
+  color: var(--success);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  /* "+1" is a neutral sign plus a digit: isolate it as LTR so RTL text does not reorder it to "1+". */
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.scoreboard__total {
+  min-width: 5ch;
+  text-align: end;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.scoreboard__row.is-leader .scoreboard__total {
+  color: var(--accent);
+}
+.penalty--dare {
+  border-color: color-mix(in srgb, var(--accent-2) 45%, transparent);
+}
+.penalty--drink {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.penalty__prompt {
+  font-size: var(--fs-l);
+  font-weight: 700;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.penalty__losers {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+}
+
+/* ---------- action sheet (GameMenu) ---------- */
+.sheet__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--safe-bottom) + var(--space-4));
+  z-index: 50;
+  animation: fade-in 160ms var(--ease);
+}
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  padding: var(--space-4);
+  box-shadow: var(--shadow);
+  animation: rise-in 200ms var(--ease);
+}
+
+/* ---------- motion ---------- */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

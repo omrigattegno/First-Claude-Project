@@ -8,7 +8,9 @@ export function normalizeText(input: string): string {
   return input
     .normalize('NFKC')
     .toLowerCase()
-    .replace(/[֑-ׇ]/g, '') // Hebrew niqqud / cantillation
+    // Hebrew niqqud / cantillation (combining marks only; maqaf U+05BE, paseq U+05C0,
+    // sof pasuq U+05C3 and nun hafukha U+05C6 are punctuation and fall through to the rule below).
+    .replace(/[\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7]/g, '')
     .replace(/[ך]/g, 'כ') // ך -> כ
     .replace(/[ם]/g, 'מ') // ם -> מ
     .replace(/[ן]/g, 'נ') // ן -> נ
