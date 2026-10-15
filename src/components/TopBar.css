@@ -1,0 +1,27 @@
+.topbar {
+  display: grid;
+  grid-template-columns: var(--tap) 1fr var(--tap);
+  align-items: center;
+  min-height: var(--tap);
+  margin-bottom: var(--space-4);
+}
+.topbar__title {
+  font-size: var(--fs-l);
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar__slot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.topbar__slot--end {
+  justify-content: flex-end;
+}
+.topbar .btn {
+  padding: 0 var(--space-2);
+  min-width: var(--tap);
+}

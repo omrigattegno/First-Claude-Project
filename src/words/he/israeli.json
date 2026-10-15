@@ -1,0 +1,8 @@
+{
+  "id": "israeli",
+  "name": "ישראלי",
+  "lang": "he",
+  "words": [
+    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+  ]
+}
