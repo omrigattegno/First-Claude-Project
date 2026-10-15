@@ -1,0 +1,8 @@
+{
+  "id": "famous-people",
+  "name": "Famous People",
+  "lang": "en",
+  "words": [
+    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+  ]
+}

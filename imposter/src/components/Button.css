@@ -1,0 +1,56 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-m);
+  font-weight: 600;
+  font-size: var(--fs-m);
+  line-height: 1.2;
+  border: 1px solid transparent;
+  transition: transform 120ms var(--ease), background 120ms var(--ease), opacity 120ms;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.btn--secondary {
+  background: var(--bg-elev-2);
+  color: var(--text);
+  border-color: var(--line);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+.btn--danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn--l {
+  min-height: 56px;
+  font-size: var(--fs-l);
+  border-radius: var(--radius-l);
+}
+.btn--xl {
+  min-height: 72px;
+  font-size: var(--fs-l);
+  border-radius: var(--radius-l);
+}
+.btn--block {
+  display: flex;
+  width: 100%;
+}

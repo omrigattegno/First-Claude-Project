@@ -1,0 +1,8 @@
+{
+  "id": "places",
+  "name": "Places",
+  "lang": "en",
+  "words": [
+    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+  ]
+}

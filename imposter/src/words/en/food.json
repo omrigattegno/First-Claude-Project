@@ -1,0 +1,8 @@
+{
+  "id": "food",
+  "name": "Food",
+  "lang": "en",
+  "words": [
+    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+  ]
+}

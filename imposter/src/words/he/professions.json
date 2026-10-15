@@ -1,0 +1,8 @@
+{
+  "id": "professions",
+  "name": "Professions",
+  "lang": "he",
+  "words": [
+    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+  ]
+}

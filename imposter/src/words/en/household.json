@@ -1,0 +1,8 @@
+{
+  "id": "household",
+  "name": "Household",
+  "lang": "en",
+  "words": [
+    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+  ]
+}
