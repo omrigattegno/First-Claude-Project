@@ -1,8 +1,367 @@
 {
   "id": "movies-tv",
-  "name": "Movies Tv",
+  "name": "Movies & TV",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Harry Potter",
+      "difficulty": 1,
+      "aliases": [
+        "Potter",
+        "Hogwarts"
+      ]
+    },
+    {
+      "word": "Titanic",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Friends",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "The Simpsons",
+      "difficulty": 1,
+      "aliases": [
+        "Simpsons",
+        "Homer Simpson"
+      ]
+    },
+    {
+      "word": "The Lion King",
+      "difficulty": 1,
+      "aliases": [
+        "Lion King",
+        "Simba"
+      ]
+    },
+    {
+      "word": "Star Wars",
+      "difficulty": 1,
+      "aliases": [
+        "Starwars"
+      ]
+    },
+    {
+      "word": "Frozen",
+      "difficulty": 1,
+      "aliases": [
+        "Elsa"
+      ]
+    },
+    {
+      "word": "Spider-Man",
+      "difficulty": 1,
+      "aliases": [
+        "Spiderman"
+      ]
+    },
+    {
+      "word": "Batman",
+      "difficulty": 1,
+      "aliases": [
+        "Bat man"
+      ]
+    },
+    {
+      "word": "Toy Story",
+      "difficulty": 1,
+      "aliases": [
+        "Toystory",
+        "Woody and Buzz"
+      ]
+    },
+    {
+      "word": "Shrek",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Game of Thrones",
+      "difficulty": 1,
+      "aliases": [
+        "GoT",
+        "Thrones"
+      ]
+    },
+    {
+      "word": "Avatar",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Jurassic Park",
+      "difficulty": 1,
+      "aliases": [
+        "Jurassic World"
+      ]
+    },
+    {
+      "word": "Mr. Bean",
+      "difficulty": 1,
+      "aliases": [
+        "Mister Bean",
+        "Bean"
+      ]
+    },
+    {
+      "word": "Tom and Jerry",
+      "difficulty": 1,
+      "aliases": [
+        "Tom & Jerry",
+        "Tom n Jerry"
+      ]
+    },
+    {
+      "word": "SpongeBob SquarePants",
+      "difficulty": 1,
+      "aliases": [
+        "SpongeBob",
+        "Sponge Bob"
+      ]
+    },
+    {
+      "word": "The Avengers",
+      "difficulty": 1,
+      "aliases": [
+        "Avengers",
+        "Marvel Avengers"
+      ]
+    },
+    {
+      "word": "Finding Nemo",
+      "difficulty": 1,
+      "aliases": [
+        "Nemo"
+      ]
+    },
+    {
+      "word": "Home Alone",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Cinderella",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "The Matrix",
+      "difficulty": 2,
+      "aliases": [
+        "Matrix"
+      ]
+    },
+    {
+      "word": "Breaking Bad",
+      "difficulty": 2,
+      "aliases": [
+        "Walter White",
+        "Heisenberg"
+      ]
+    },
+    {
+      "word": "Stranger Things",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Forrest Gump",
+      "difficulty": 2,
+      "aliases": [
+        "Forest Gump"
+      ]
+    },
+    {
+      "word": "The Godfather",
+      "difficulty": 2,
+      "aliases": [
+        "Godfather"
+      ]
+    },
+    {
+      "word": "Pirates of the Caribbean",
+      "difficulty": 2,
+      "aliases": [
+        "Jack Sparrow",
+        "Pirates of the Carribean"
+      ]
+    },
+    {
+      "word": "Indiana Jones",
+      "difficulty": 2,
+      "aliases": [
+        "Indy"
+      ]
+    },
+    {
+      "word": "Rocky",
+      "difficulty": 2,
+      "aliases": [
+        "Rocky Balboa"
+      ]
+    },
+    {
+      "word": "Back to the Future",
+      "difficulty": 2,
+      "aliases": [
+        "Marty McFly"
+      ]
+    },
+    {
+      "word": "The Hunger Games",
+      "difficulty": 2,
+      "aliases": [
+        "Hunger Games",
+        "Katniss"
+      ]
+    },
+    {
+      "word": "Squid Game",
+      "difficulty": 2,
+      "aliases": [
+        "Squid Games"
+      ]
+    },
+    {
+      "word": "The Office",
+      "difficulty": 2,
+      "aliases": [
+        "Office"
+      ]
+    },
+    {
+      "word": "Money Heist",
+      "difficulty": 2,
+      "aliases": [
+        "La Casa de Papel",
+        "Casa de Papel"
+      ]
+    },
+    {
+      "word": "Ratatouille",
+      "difficulty": 2,
+      "aliases": [
+        "Ratatouile",
+        "Remy"
+      ]
+    },
+    {
+      "word": "Mission: Impossible",
+      "difficulty": 2,
+      "aliases": [
+        "Ethan Hunt"
+      ]
+    },
+    {
+      "word": "The Big Bang Theory",
+      "difficulty": 2,
+      "aliases": [
+        "Big Bang Theory",
+        "Big Bang"
+      ]
+    },
+    {
+      "word": "Pulp Fiction",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "James Bond",
+      "difficulty": 2,
+      "aliases": [
+        "Bond",
+        "007",
+        "Agent 007"
+      ]
+    },
+    {
+      "word": "Minions",
+      "difficulty": 2,
+      "aliases": [
+        "Despicable Me",
+        "Minion"
+      ]
+    },
+    {
+      "word": "Sherlock",
+      "difficulty": 2,
+      "aliases": [
+        "Sherlock Holmes"
+      ]
+    },
+    {
+      "word": "Inception",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Black Mirror",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "The Shawshank Redemption",
+      "difficulty": 3,
+      "aliases": [
+        "Shawshank",
+        "Shawshank Redemption"
+      ]
+    },
+    {
+      "word": "Fight Club",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Interstellar",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "The Crown",
+      "difficulty": 3,
+      "aliases": [
+        "Crown"
+      ]
+    },
+    {
+      "word": "Parasite",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Peaky Blinders",
+      "difficulty": 3,
+      "aliases": [
+        "Peaky Blinder",
+        "Tommy Shelby"
+      ]
+    },
+    {
+      "word": "Casablanca",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "The Truman Show",
+      "difficulty": 3,
+      "aliases": [
+        "Truman Show",
+        "Truman"
+      ]
+    },
+    {
+      "word": "Oppenheimer",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Fauda",
+      "difficulty": 3,
+      "aliases": []
+    }
   ]
 }

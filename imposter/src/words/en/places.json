@@ -3,6 +3,355 @@
   "name": "Places",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Paris",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "London",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "New York",
+      "difficulty": 1,
+      "aliases": [
+        "New York City",
+        "NYC",
+        "Manhattan"
+      ]
+    },
+    {
+      "word": "Beach",
+      "difficulty": 1,
+      "aliases": [
+        "seaside",
+        "seashore"
+      ]
+    },
+    {
+      "word": "Airport",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Hospital",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "School",
+      "difficulty": 1,
+      "aliases": [
+        "high school"
+      ]
+    },
+    {
+      "word": "Italy",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Japan",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Eiffel Tower",
+      "difficulty": 1,
+      "aliases": [
+        "Eiffel"
+      ]
+    },
+    {
+      "word": "Hotel",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Supermarket",
+      "difficulty": 1,
+      "aliases": [
+        "grocery store",
+        "grocery",
+        "market"
+      ]
+    },
+    {
+      "word": "Cinema",
+      "difficulty": 1,
+      "aliases": [
+        "movie theater",
+        "movie theatre",
+        "movies"
+      ]
+    },
+    {
+      "word": "Zoo",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Egypt",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Rome",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Desert",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Library",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Swimming pool",
+      "difficulty": 1,
+      "aliases": [
+        "pool"
+      ]
+    },
+    {
+      "word": "Restaurant",
+      "difficulty": 1,
+      "aliases": []
+    },
+    {
+      "word": "Jerusalem",
+      "difficulty": 1,
+      "aliases": [
+        "Yerushalayim"
+      ]
+    },
+    {
+      "word": "Lisbon",
+      "difficulty": 2,
+      "aliases": [
+        "Lisboa"
+      ]
+    },
+    {
+      "word": "Berlin",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Amsterdam",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Tokyo",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Dubai",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Great Wall of China",
+      "difficulty": 2,
+      "aliases": [
+        "Great Wall",
+        "Chinese Wall"
+      ]
+    },
+    {
+      "word": "Statue of Liberty",
+      "difficulty": 2,
+      "aliases": [
+        "Lady Liberty",
+        "Liberty Statue"
+      ]
+    },
+    {
+      "word": "Pyramids of Giza",
+      "difficulty": 2,
+      "aliases": [
+        "Pyramids",
+        "Giza",
+        "Egyptian Pyramids"
+      ]
+    },
+    {
+      "word": "Grand Canyon",
+      "difficulty": 2,
+      "aliases": [
+        "Canyon"
+      ]
+    },
+    {
+      "word": "Las Vegas",
+      "difficulty": 2,
+      "aliases": [
+        "Vegas"
+      ]
+    },
+    {
+      "word": "Barcelona",
+      "difficulty": 2,
+      "aliases": [
+        "Barca"
+      ]
+    },
+    {
+      "word": "Australia",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Brazil",
+      "difficulty": 2,
+      "aliases": [
+        "Brasil"
+      ]
+    },
+    {
+      "word": "Dead Sea",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Museum",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Train station",
+      "difficulty": 2,
+      "aliases": [
+        "railway station",
+        "station"
+      ]
+    },
+    {
+      "word": "Prison",
+      "difficulty": 2,
+      "aliases": [
+        "jail"
+      ]
+    },
+    {
+      "word": "Stadium",
+      "difficulty": 2,
+      "aliases": [
+        "football stadium",
+        "arena"
+      ]
+    },
+    {
+      "word": "Lighthouse",
+      "difficulty": 2,
+      "aliases": [
+        "light house"
+      ]
+    },
+    {
+      "word": "Volcano",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Niagara Falls",
+      "difficulty": 2,
+      "aliases": [
+        "Niagara"
+      ]
+    },
+    {
+      "word": "Mount Everest",
+      "difficulty": 2,
+      "aliases": [
+        "Everest"
+      ]
+    },
+    {
+      "word": "Reykjavik",
+      "difficulty": 3,
+      "aliases": [
+        "Reykjavík"
+      ]
+    },
+    {
+      "word": "Machu Picchu",
+      "difficulty": 3,
+      "aliases": [
+        "Machu Pichu"
+      ]
+    },
+    {
+      "word": "Taj Mahal",
+      "difficulty": 3,
+      "aliases": [
+        "Taj"
+      ]
+    },
+    {
+      "word": "Venice",
+      "difficulty": 3,
+      "aliases": [
+        "Venezia"
+      ]
+    },
+    {
+      "word": "Colosseum",
+      "difficulty": 3,
+      "aliases": [
+        "Coliseum",
+        "Roman Colosseum"
+      ]
+    },
+    {
+      "word": "Sahara Desert",
+      "difficulty": 3,
+      "aliases": [
+        "Sahara"
+      ]
+    },
+    {
+      "word": "Amazon rainforest",
+      "difficulty": 3,
+      "aliases": [
+        "Amazon",
+        "Amazon jungle"
+      ]
+    },
+    {
+      "word": "Antarctica",
+      "difficulty": 3,
+      "aliases": [
+        "South Pole"
+      ]
+    },
+    {
+      "word": "Mount Fuji",
+      "difficulty": 3,
+      "aliases": [
+        "Fuji",
+        "Fujiyama"
+      ]
+    },
+    {
+      "word": "Stonehenge",
+      "difficulty": 3,
+      "aliases": [
+        "Stone Henge"
+      ]
+    },
+    {
+      "word": "Petra",
+      "difficulty": 3,
+      "aliases": []
+    }
   ]
 }

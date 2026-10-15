@@ -3,6 +3,415 @@
   "name": "Household",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Bed",
+      "difficulty": 1,
+      "aliases": [
+        "beds"
+      ]
+    },
+    {
+      "word": "Sofa",
+      "difficulty": 1,
+      "aliases": [
+        "couch",
+        "settee"
+      ]
+    },
+    {
+      "word": "Television",
+      "difficulty": 1,
+      "aliases": [
+        "TV",
+        "telly",
+        "TV set"
+      ]
+    },
+    {
+      "word": "Refrigerator",
+      "difficulty": 1,
+      "aliases": [
+        "fridge"
+      ]
+    },
+    {
+      "word": "Chair",
+      "difficulty": 1,
+      "aliases": [
+        "chairs",
+        "armchair"
+      ]
+    },
+    {
+      "word": "Table",
+      "difficulty": 1,
+      "aliases": [
+        "dining table"
+      ]
+    },
+    {
+      "word": "Lamp",
+      "difficulty": 1,
+      "aliases": [
+        "light",
+        "lamps"
+      ]
+    },
+    {
+      "word": "Door",
+      "difficulty": 1,
+      "aliases": [
+        "doors",
+        "front door"
+      ]
+    },
+    {
+      "word": "Window",
+      "difficulty": 1,
+      "aliases": [
+        "windows"
+      ]
+    },
+    {
+      "word": "Toilet",
+      "difficulty": 1,
+      "aliases": [
+        "loo",
+        "WC",
+        "lavatory"
+      ]
+    },
+    {
+      "word": "Shower",
+      "difficulty": 1,
+      "aliases": [
+        "showers"
+      ]
+    },
+    {
+      "word": "Pillow",
+      "difficulty": 1,
+      "aliases": [
+        "pillows",
+        "cushion"
+      ]
+    },
+    {
+      "word": "Blanket",
+      "difficulty": 1,
+      "aliases": [
+        "blankets",
+        "duvet",
+        "quilt"
+      ]
+    },
+    {
+      "word": "Mirror",
+      "difficulty": 1,
+      "aliases": [
+        "mirrors"
+      ]
+    },
+    {
+      "word": "Clock",
+      "difficulty": 1,
+      "aliases": [
+        "wall clock",
+        "alarm clock"
+      ]
+    },
+    {
+      "word": "Towel",
+      "difficulty": 1,
+      "aliases": [
+        "towels",
+        "bath towel"
+      ]
+    },
+    {
+      "word": "Spoon",
+      "difficulty": 1,
+      "aliases": [
+        "spoons",
+        "teaspoon"
+      ]
+    },
+    {
+      "word": "Cup",
+      "difficulty": 1,
+      "aliases": [
+        "mug",
+        "cups",
+        "glass"
+      ]
+    },
+    {
+      "word": "Plate",
+      "difficulty": 1,
+      "aliases": [
+        "plates",
+        "dish"
+      ]
+    },
+    {
+      "word": "Key",
+      "difficulty": 1,
+      "aliases": [
+        "keys",
+        "house key"
+      ]
+    },
+    {
+      "word": "Bookshelf",
+      "difficulty": 1,
+      "aliases": [
+        "bookcase",
+        "book shelf",
+        "shelf"
+      ]
+    },
+    {
+      "word": "Microwave",
+      "difficulty": 2,
+      "aliases": [
+        "microwave oven"
+      ]
+    },
+    {
+      "word": "Washing machine",
+      "difficulty": 2,
+      "aliases": [
+        "washer",
+        "laundry machine"
+      ]
+    },
+    {
+      "word": "Vacuum cleaner",
+      "difficulty": 2,
+      "aliases": [
+        "vacuum",
+        "hoover"
+      ]
+    },
+    {
+      "word": "Dishwasher",
+      "difficulty": 2,
+      "aliases": [
+        "dish washer"
+      ]
+    },
+    {
+      "word": "Toaster",
+      "difficulty": 2,
+      "aliases": []
+    },
+    {
+      "word": "Kettle",
+      "difficulty": 2,
+      "aliases": [
+        "electric kettle",
+        "tea kettle"
+      ]
+    },
+    {
+      "word": "Iron",
+      "difficulty": 2,
+      "aliases": [
+        "clothes iron",
+        "steam iron"
+      ]
+    },
+    {
+      "word": "Curtains",
+      "difficulty": 2,
+      "aliases": [
+        "curtain",
+        "drapes"
+      ]
+    },
+    {
+      "word": "Carpet",
+      "difficulty": 2,
+      "aliases": [
+        "rug",
+        "carpets"
+      ]
+    },
+    {
+      "word": "Wardrobe",
+      "difficulty": 2,
+      "aliases": [
+        "closet",
+        "cupboard"
+      ]
+    },
+    {
+      "word": "Remote control",
+      "difficulty": 2,
+      "aliases": [
+        "remote",
+        "TV remote"
+      ]
+    },
+    {
+      "word": "Hairdryer",
+      "difficulty": 2,
+      "aliases": [
+        "hair dryer",
+        "blow dryer"
+      ]
+    },
+    {
+      "word": "Frying pan",
+      "difficulty": 2,
+      "aliases": [
+        "pan",
+        "skillet"
+      ]
+    },
+    {
+      "word": "Toothbrush",
+      "difficulty": 2,
+      "aliases": [
+        "tooth brush"
+      ]
+    },
+    {
+      "word": "Scissors",
+      "difficulty": 2,
+      "aliases": [
+        "scissor"
+      ]
+    },
+    {
+      "word": "Broom",
+      "difficulty": 2,
+      "aliases": [
+        "broomstick"
+      ]
+    },
+    {
+      "word": "Candle",
+      "difficulty": 2,
+      "aliases": [
+        "candles"
+      ]
+    },
+    {
+      "word": "Umbrella",
+      "difficulty": 2,
+      "aliases": [
+        "umbrellas",
+        "brolly"
+      ]
+    },
+    {
+      "word": "Ladder",
+      "difficulty": 2,
+      "aliases": [
+        "step ladder",
+        "stepladder"
+      ]
+    },
+    {
+      "word": "Air conditioner",
+      "difficulty": 2,
+      "aliases": [
+        "AC",
+        "A/C",
+        "air conditioning",
+        "aircon"
+      ]
+    },
+    {
+      "word": "Doorbell",
+      "difficulty": 2,
+      "aliases": [
+        "door bell"
+      ]
+    },
+    {
+      "word": "Bathtub",
+      "difficulty": 2,
+      "aliases": [
+        "bath",
+        "tub",
+        "bath tub"
+      ]
+    },
+    {
+      "word": "Corkscrew",
+      "difficulty": 3,
+      "aliases": [
+        "cork screw",
+        "wine opener",
+        "bottle opener"
+      ]
+    },
+    {
+      "word": "Colander",
+      "difficulty": 3,
+      "aliases": [
+        "strainer",
+        "sieve"
+      ]
+    },
+    {
+      "word": "Thermostat",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Dustpan",
+      "difficulty": 3,
+      "aliases": [
+        "dust pan"
+      ]
+    },
+    {
+      "word": "Coat hanger",
+      "difficulty": 3,
+      "aliases": [
+        "hanger",
+        "clothes hanger"
+      ]
+    },
+    {
+      "word": "Cheese grater",
+      "difficulty": 3,
+      "aliases": [
+        "grater"
+      ]
+    },
+    {
+      "word": "Extension cord",
+      "difficulty": 3,
+      "aliases": [
+        "extension cable",
+        "power strip",
+        "extension lead"
+      ]
+    },
+    {
+      "word": "Fire extinguisher",
+      "difficulty": 3,
+      "aliases": [
+        "extinguisher"
+      ]
+    },
+    {
+      "word": "Rolling pin",
+      "difficulty": 3,
+      "aliases": []
+    },
+    {
+      "word": "Clothes peg",
+      "difficulty": 3,
+      "aliases": [
+        "clothespin",
+        "clothes pin",
+        "peg"
+      ]
+    }
   ]
 }

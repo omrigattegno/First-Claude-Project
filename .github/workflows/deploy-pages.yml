@@ -1,0 +1,64 @@
+# Builds the Imposter PWA (imposter/) and deploys it to GitHub Pages.
+#
+# One-time setup: in the repository Settings > Pages, set "Build and deployment > Source" to
+# "GitHub Actions" (not "Deploy from a branch"), otherwise the deploy job fails with a 404.
+# The site is served from https://<owner>.github.io/<repo>/, so the app is built with
+# VITE_BASE=/<repo>/ (resolves to /First-Claude-Project/ here) which sets Vite's base, the manifest
+# start_url/scope and the service-worker navigation fallback.
+name: Deploy Imposter to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'imposter/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a newer push supersedes a run that is still queued.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: imposter
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: imposter/package-lock.json
+
+      - run: npm ci
+
+      # Typecheck + Vite build (see imposter/package.json "build").
+      - run: npm run build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: imposter/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

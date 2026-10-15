@@ -3,6 +3,441 @@
   "name": "Professions",
   "lang": "en",
   "words": [
-    { "word": "placeholder", "difficulty": 1, "aliases": [] }
+    {
+      "word": "Doctor",
+      "difficulty": 1,
+      "aliases": [
+        "physician",
+        "doctors",
+        "GP"
+      ]
+    },
+    {
+      "word": "Teacher",
+      "difficulty": 1,
+      "aliases": [
+        "teachers",
+        "schoolteacher"
+      ]
+    },
+    {
+      "word": "Police officer",
+      "difficulty": 1,
+      "aliases": [
+        "policeman",
+        "police",
+        "cop",
+        "policewoman"
+      ]
+    },
+    {
+      "word": "Firefighter",
+      "difficulty": 1,
+      "aliases": [
+        "fireman",
+        "fire fighter",
+        "firewoman"
+      ]
+    },
+    {
+      "word": "Chef",
+      "difficulty": 1,
+      "aliases": [
+        "cook"
+      ]
+    },
+    {
+      "word": "Pilot",
+      "difficulty": 1,
+      "aliases": [
+        "airline pilot",
+        "captain"
+      ]
+    },
+    {
+      "word": "Nurse",
+      "difficulty": 1,
+      "aliases": [
+        "nurses"
+      ]
+    },
+    {
+      "word": "Lawyer",
+      "difficulty": 1,
+      "aliases": [
+        "attorney",
+        "solicitor",
+        "barrister"
+      ]
+    },
+    {
+      "word": "Farmer",
+      "difficulty": 1,
+      "aliases": [
+        "farmers"
+      ]
+    },
+    {
+      "word": "Dentist",
+      "difficulty": 1,
+      "aliases": [
+        "dentists",
+        "tooth doctor"
+      ]
+    },
+    {
+      "word": "Actor",
+      "difficulty": 1,
+      "aliases": [
+        "actress",
+        "actors"
+      ]
+    },
+    {
+      "word": "Singer",
+      "difficulty": 1,
+      "aliases": [
+        "singers",
+        "vocalist"
+      ]
+    },
+    {
+      "word": "Soldier",
+      "difficulty": 1,
+      "aliases": [
+        "soldiers",
+        "army"
+      ]
+    },
+    {
+      "word": "Waiter",
+      "difficulty": 1,
+      "aliases": [
+        "waitress",
+        "server",
+        "waiters"
+      ]
+    },
+    {
+      "word": "Driver",
+      "difficulty": 1,
+      "aliases": [
+        "taxi driver",
+        "bus driver",
+        "chauffeur"
+      ]
+    },
+    {
+      "word": "Programmer",
+      "difficulty": 1,
+      "aliases": [
+        "software developer",
+        "developer",
+        "coder",
+        "software engineer"
+      ]
+    },
+    {
+      "word": "Hairdresser",
+      "difficulty": 1,
+      "aliases": [
+        "barber",
+        "hair stylist",
+        "hairstylist"
+      ]
+    },
+    {
+      "word": "Judge",
+      "difficulty": 1,
+      "aliases": [
+        "judges"
+      ]
+    },
+    {
+      "word": "Mechanic",
+      "difficulty": 1,
+      "aliases": [
+        "car mechanic",
+        "mechanics"
+      ]
+    },
+    {
+      "word": "Photographer",
+      "difficulty": 1,
+      "aliases": [
+        "photographers"
+      ]
+    },
+    {
+      "word": "Scientist",
+      "difficulty": 1,
+      "aliases": [
+        "scientists",
+        "researcher"
+      ]
+    },
+    {
+      "word": "Architect",
+      "difficulty": 2,
+      "aliases": [
+        "architects"
+      ]
+    },
+    {
+      "word": "Accountant",
+      "difficulty": 2,
+      "aliases": [
+        "accountants",
+        "bookkeeper",
+        "CPA"
+      ]
+    },
+    {
+      "word": "Plumber",
+      "difficulty": 2,
+      "aliases": [
+        "plumbers"
+      ]
+    },
+    {
+      "word": "Electrician",
+      "difficulty": 2,
+      "aliases": [
+        "electricians"
+      ]
+    },
+    {
+      "word": "Veterinarian",
+      "difficulty": 2,
+      "aliases": [
+        "vet",
+        "vets",
+        "animal doctor"
+      ]
+    },
+    {
+      "word": "Pharmacist",
+      "difficulty": 2,
+      "aliases": [
+        "pharmacists",
+        "chemist"
+      ]
+    },
+    {
+      "word": "Journalist",
+      "difficulty": 2,
+      "aliases": [
+        "reporter",
+        "journalists",
+        "news reporter"
+      ]
+    },
+    {
+      "word": "Astronaut",
+      "difficulty": 2,
+      "aliases": [
+        "astronauts",
+        "cosmonaut",
+        "spaceman"
+      ]
+    },
+    {
+      "word": "Lifeguard",
+      "difficulty": 2,
+      "aliases": [
+        "life guard",
+        "lifeguards"
+      ]
+    },
+    {
+      "word": "Librarian",
+      "difficulty": 2,
+      "aliases": [
+        "librarians"
+      ]
+    },
+    {
+      "word": "Surgeon",
+      "difficulty": 2,
+      "aliases": [
+        "surgeons"
+      ]
+    },
+    {
+      "word": "Psychologist",
+      "difficulty": 2,
+      "aliases": [
+        "psychologists",
+        "therapist",
+        "psychiatrist",
+        "shrink"
+      ]
+    },
+    {
+      "word": "Carpenter",
+      "difficulty": 2,
+      "aliases": [
+        "carpenters",
+        "woodworker"
+      ]
+    },
+    {
+      "word": "Tour guide",
+      "difficulty": 2,
+      "aliases": [
+        "guide",
+        "tourist guide"
+      ]
+    },
+    {
+      "word": "Flight attendant",
+      "difficulty": 2,
+      "aliases": [
+        "stewardess",
+        "steward",
+        "air hostess",
+        "cabin crew"
+      ]
+    },
+    {
+      "word": "Real estate agent",
+      "difficulty": 2,
+      "aliases": [
+        "realtor",
+        "estate agent",
+        "real estate broker"
+      ]
+    },
+    {
+      "word": "Butcher",
+      "difficulty": 2,
+      "aliases": [
+        "butchers"
+      ]
+    },
+    {
+      "word": "Baker",
+      "difficulty": 2,
+      "aliases": [
+        "bakers"
+      ]
+    },
+    {
+      "word": "Tailor",
+      "difficulty": 2,
+      "aliases": [
+        "tailors",
+        "seamstress",
+        "dressmaker"
+      ]
+    },
+    {
+      "word": "Detective",
+      "difficulty": 2,
+      "aliases": [
+        "detectives",
+        "private investigator",
+        "investigator"
+      ]
+    },
+    {
+      "word": "Translator",
+      "difficulty": 2,
+      "aliases": [
+        "interpreter",
+        "translators"
+      ]
+    },
+    {
+      "word": "Dancer",
+      "difficulty": 2,
+      "aliases": [
+        "dancers",
+        "ballerina"
+      ]
+    },
+    {
+      "word": "Anesthesiologist",
+      "difficulty": 3,
+      "aliases": [
+        "anaesthesiologist",
+        "anesthetist",
+        "anaesthetist"
+      ]
+    },
+    {
+      "word": "Sommelier",
+      "difficulty": 3,
+      "aliases": [
+        "wine expert",
+        "wine steward"
+      ]
+    },
+    {
+      "word": "Locksmith",
+      "difficulty": 3,
+      "aliases": [
+        "lock smith",
+        "locksmiths"
+      ]
+    },
+    {
+      "word": "Beekeeper",
+      "difficulty": 3,
+      "aliases": [
+        "bee keeper",
+        "apiarist",
+        "beekeepers"
+      ]
+    },
+    {
+      "word": "Paramedic",
+      "difficulty": 3,
+      "aliases": [
+        "paramedics",
+        "EMT",
+        "ambulance driver"
+      ]
+    },
+    {
+      "word": "Pastry chef",
+      "difficulty": 3,
+      "aliases": [
+        "patissier",
+        "pastry cook"
+      ]
+    },
+    {
+      "word": "Air traffic controller",
+      "difficulty": 3,
+      "aliases": [
+        "air traffic control",
+        "flight controller"
+      ]
+    },
+    {
+      "word": "Marine biologist",
+      "difficulty": 3,
+      "aliases": [
+        "marine biology"
+      ]
+    },
+    {
+      "word": "Optician",
+      "difficulty": 3,
+      "aliases": [
+        "optometrist",
+        "eye doctor",
+        "opticians"
+      ]
+    },
+    {
+      "word": "Blacksmith",
+      "difficulty": 3,
+      "aliases": [
+        "black smith",
+        "smith"
+      ]
+    }
   ]
 }
