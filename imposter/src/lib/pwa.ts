@@ -159,8 +159,12 @@ let registered = false;
 
 /**
  * Register the service worker and start listening for the install prompt. Idempotent.
- * registerType is 'autoUpdate' (vite.config.ts): a new build takes over quietly and is shown on the
- * next launch, so nothing interrupts a round in progress.
+ * registerType is 'autoUpdate' (vite.config.ts): a new build's worker installs in the background and
+ * takes control silently (skipWaiting + clientsClaim). Without `onNeedReload` the vite-plugin-pwa client
+ * would then call window.location.reload() the moment that happens, which can land mid-round (the
+ * Discussion countdown, a half-typed guess and the iOS sensor permission would all be lost), so the
+ * no-op below deliberately keeps the page as it is: nothing lazy is left to load from the old worker,
+ * and the new build is simply used from the next launch.
  */
 export function registerPWA(): void {
   if (!hasWindow()) return;
@@ -170,8 +174,8 @@ export function registerPWA(): void {
   try {
     registerSW({
       immediate: true,
-      onNeedRefresh() {
-        /* autoUpdate: handled by the service worker; the fresh version loads on the next launch */
+      onNeedReload() {
+        /* the new worker already controls the page; never reload mid-round, use the new build next launch */
       },
       onOfflineReady() {
         /* everything (app shell + bundled word packs) is precached; no UI needed */

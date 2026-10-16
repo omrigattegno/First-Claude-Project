@@ -3,7 +3,7 @@ import { STORAGE_KEY_CUSTOM_PACKS } from '../game/constants';
 import type { Lang, WordPack } from '../game/types';
 
 export interface CustomPack {
-  id: string; // always prefixed 'custom-'
+  id: string; // always prefixed CUSTOM_PACK_PREFIX ('custom-', src/game/types.ts)
   name: string;
   lang: Lang;
   words: string[];
@@ -30,6 +30,10 @@ function read(): CustomPack[] {
   return cache;
 }
 
+function notify(): void {
+  listeners.forEach((l) => l());
+}
+
 function write(packs: CustomPack[]): void {
   cache = packs;
   try {
@@ -37,7 +41,17 @@ function write(packs: CustomPack[]): void {
   } catch {
     /* ignore */
   }
-  listeners.forEach((l) => l());
+  notify();
+}
+
+// Another window sharing this localStorage edited the packs: forget the cached copy so the next
+// read picks up theirs, and tell subscribers (store packs, the Settings list) to re-read.
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('storage', (e: StorageEvent) => {
+    if (e.key !== STORAGE_KEY_CUSTOM_PACKS && e.key !== null) return; // null key: storage.clear()
+    cache = null;
+    notify();
+  });
 }
 
 export function listCustomPacks(): CustomPack[] {
@@ -60,6 +74,7 @@ export function subscribeCustomPacks(listener: Listener): () => void {
   return () => listeners.delete(listener);
 }
 
+/** Custom packs as WordPacks. Difficulty is nominal: drawWord treats custom words as matching every level. */
 export function loadCustomPacks(): WordPack[] {
   return read()
     .filter((p) => p.words.length > 0)

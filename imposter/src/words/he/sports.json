@@ -35,7 +35,7 @@
     { "word": "קריקט", "difficulty": 2, "aliases": [] },
     { "word": "טריאתלון", "difficulty": 2, "aliases": ["טריאטלון"] },
     { "word": "אתלטיקה", "difficulty": 2, "aliases": ["אתלטיקה קלה"] },
-    { "word": "סייף", "difficulty": 2, "aliases": ["סיוף"] },
+    { "word": "סיוף", "difficulty": 2, "aliases": ["סייף", "פנסינג"] },
     { "word": "קיאקים", "difficulty": 2, "aliases": ["קיאק", "קייאק"] },
     { "word": "חץ וקשת", "difficulty": 2, "aliases": ["קשתות"] },
     { "word": "רכיבה על סוסים", "difficulty": 2, "aliases": ["רכיבה", "סוסים"] },
@@ -54,7 +54,7 @@
     { "word": "קפיצה במוט", "difficulty": 3, "aliases": [] },
     { "word": "זריקת דיסקוס", "difficulty": 3, "aliases": ["דיסקוס"] },
     { "word": "קייטסרפינג", "difficulty": 3, "aliases": ["קייט", "kitesurf"] },
-    { "word": "התעמלות אומנותית", "difficulty": 3, "aliases": ["התעמלות אמנותית"] },
+    { "word": "התעמלות אמנותית", "difficulty": 3, "aliases": ["התעמלות אומנותית"] },
     { "word": "כדורמים", "difficulty": 3, "aliases": ["כדור מים", "water polo"] }
   ]
 }

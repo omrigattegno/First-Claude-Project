@@ -1,7 +1,8 @@
 /**
  * Clue rounds: the table reads this together. Shows the clue round counter, the current speaker
  * huge, the turn order (done / current / upcoming) and a big Next (CLUE_NEXT). On the last turn the
- * button becomes "Start discussion" (or "Go to vote" when the discussion timer is off).
+ * button becomes "Start discussion" (or "Go to vote" when the discussion timer is off). Next is
+ * tap-guarded: a double tap cannot skip a speaker or, on the last turn, the whole discussion.
  */
 import { Button } from '../components/Button';
 import { GameMenu } from '../components/GameMenu';
@@ -9,6 +10,7 @@ import { TopBar } from '../components/TopBar';
 import { TurnOrder, type TurnOrderItem } from '../components/game/TurnOrder';
 import { clueOrder, currentSpeaker, playerName } from '../game/engine';
 import { useGame } from '../game/store';
+import { useTapGuard } from '../hooks/useTapGuard';
 import { useT } from '../i18n';
 import { unlockAudio } from '../lib/audio';
 import '../styles/game.css';
@@ -16,6 +18,7 @@ import '../styles/game.css';
 export function CluesScreen() {
   const t = useT();
   const { state, dispatch } = useGame();
+  const [guarded, arm] = useTapGuard();
   const round = state.round;
   const speaker = currentSpeaker(state);
   if (!round || !speaker) return null;
@@ -38,6 +41,8 @@ export function CluesScreen() {
     : t('common.next');
 
   const onNext = () => {
+    if (guarded) return;
+    arm();
     // Any tap before the discussion timer unlocks WebAudio on iOS so the 10-second beep can sound.
     unlockAudio();
     dispatch({ type: 'CLUE_NEXT' });
@@ -65,7 +70,15 @@ export function CluesScreen() {
         <p className="clues__hint">{t('clues.hint')}</p>
 
         <div className="game-actions">
-          <Button variant="primary" size="xl" block data-testid="clues-next" onClick={onNext}>
+          <Button
+            variant="primary"
+            size="xl"
+            block
+            className={guarded ? 'is-guarded' : ''}
+            disabled={guarded}
+            data-testid="clues-next"
+            onClick={onNext}
+          >
             {nextLabel}
           </Button>
         </div>

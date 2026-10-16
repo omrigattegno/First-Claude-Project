@@ -3,7 +3,7 @@
  * scoreboard (points this round + totals, leaders highlighted), an optional penalty prompt for the
  * losing side, and the round-end actions (Next round / Players / Settings / End game).
  */
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../components/Button';
 import { GameMenu } from '../components/GameMenu';
 import { Modal } from '../components/Modal';
@@ -11,8 +11,7 @@ import { TopBar } from '../components/TopBar';
 import { PenaltyCard } from '../components/game/PenaltyCard';
 import { Scoreboard } from '../components/game/Scoreboard';
 import { playerName, scoreboard } from '../game/engine';
-import { losingSide, pickPenalty } from '../game/penalties';
-import { cryptoRng } from '../game/rng';
+import { losingSide, penaltyForRound } from '../game/penalties';
 import { useGame } from '../game/store';
 import { useLang, useT } from '../i18n';
 import { useNav } from '../nav';
@@ -28,16 +27,11 @@ export function ResultsScreen() {
   const round = state.round;
   const outcome = round?.outcome ?? null;
   const penaltyKind = round?.config.penalty ?? 'off';
-  const roundNumber = round?.number ?? 0;
-
-  // One prompt per round (stable across re-renders of this screen).
-  const prompt = useMemo(
-    () => (penaltyKind === 'off' ? null : pickPenalty(penaltyKind, lang, cryptoRng)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [penaltyKind, lang, roundNumber],
-  );
 
   if (!round || !outcome) return null;
+
+  // One prompt per round: a pure function of the round, so Home -> Resume or a reload shows the same one.
+  const prompt = penaltyKind === 'off' ? null : penaltyForRound(penaltyKind, lang, round);
 
   const name = (id: string) => playerName(state, id);
   const imposterNames = round.imposterIds.map(name);
@@ -154,7 +148,7 @@ export function ResultsScreen() {
               {t('common.settings')}
             </Button>
             <Button variant="ghost" data-testid="results-end" onClick={() => setConfirmEnd(true)}>
-              {t('menu.endGame')}
+              {t('results.endGame')}
             </Button>
           </div>
         </div>

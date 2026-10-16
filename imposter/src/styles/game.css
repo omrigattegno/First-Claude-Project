@@ -2,6 +2,11 @@
    Dark, calm, huge type the table reads from a distance. Logical properties only so RTL mirrors. */
 
 /* ---------- layout helpers ---------- */
+/* Double-tap guard (hooks/useTapGuard): a phase-advancing button is disabled for a moment after mount
+   and after each tap. The player should not notice it, so it does not dim like other disabled buttons. */
+.btn.is-guarded:disabled {
+  opacity: 1;
+}
 .game-stack {
   display: flex;
   flex-direction: column;
@@ -463,6 +468,9 @@
   grid-template-columns: 1fr;
   gap: var(--space-2);
   width: 100%;
+  /* In hold mode a name is tapped with a second finger while the first holds the button: a slightly
+     moving finger must not start a pan (pointercancel) and lose the pointerup that selects the name. */
+  touch-action: none;
 }
 .ballot__opts--two {
   grid-template-columns: 1fr 1fr;

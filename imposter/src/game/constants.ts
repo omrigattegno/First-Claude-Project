@@ -18,6 +18,11 @@ export const DISCUSSION_BEEP_AT_SECONDS = 10;
 /** Lift-to-reveal: device pitch (DeviceOrientationEvent.beta, degrees from horizontal). */
 export const LIFT_UP_DEGREES = 45;
 export const LIFT_DOWN_DEGREES = 30;
+/**
+ * Pitch at or beyond which the screen is turning away from the player (face-down on a table reads ~180):
+ * such readings never count as lifted and hide a lifted card (same debounce as lowering).
+ */
+export const LIFT_MAX_DEGREES = 135;
 export const LIFT_UP_DEBOUNCE_MS = 300;
 export const LIFT_DOWN_DEBOUNCE_MS = 150;
 

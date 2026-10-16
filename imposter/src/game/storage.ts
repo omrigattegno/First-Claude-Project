@@ -1,5 +1,5 @@
 import { STORAGE_KEY_LAST_PLAYERS, STORAGE_KEY_SETTINGS, STORAGE_KEY_STATE } from './constants';
-import { isGameState, sanitizeSettings, DEFAULT_SETTINGS } from './engine';
+import { isGameState, sanitizeSettings, upgradeState, DEFAULT_SETTINGS } from './engine';
 import type { GameState, Settings } from './types';
 
 function safeGet(key: string): string | null {
@@ -31,7 +31,8 @@ export function loadSnapshot(): GameState | null {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (!isGameState(parsed)) return null;
-    return { ...parsed, settings: sanitizeSettings({ ...DEFAULT_SETTINGS, ...parsed.settings }) };
+    // Fields added after the snapshot was written (discussionEndsAt, benched) are filled in.
+    return upgradeState({ ...parsed, settings: sanitizeSettings({ ...DEFAULT_SETTINGS, ...parsed.settings }) });
   } catch {
     return null;
   }

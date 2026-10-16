@@ -3,6 +3,8 @@
  * small "Can't lift? Hold here" fallback that swaps in the same hold button (lifting keeps working).
  * When the host chose Lift but iOS has not granted sensor access yet (permission 'prompt', e.g. after a
  * refresh mid-round), an "Enable lift-to-reveal" button asks for it inside the tap, as iOS requires.
+ * While `needsLower` is true (lift mode, the phone has not been seen lowered since arming) the hint
+ * says to lower the phone first: lifting does nothing until then.
  */
 import { useState, type HTMLAttributes } from 'react';
 import type { RevealMethod } from '../../game/types';
@@ -19,6 +21,8 @@ export interface RevealControlsProps {
   permission?: SensorPermission;
   holdProps: HTMLAttributes<HTMLElement>;
   revealed: boolean;
+  /** useReveal().needsLower: show "lower the phone first" instead of the lift hint. */
+  needsLower?: boolean;
   liftHint: string;
   holdHint: string;
   holdLabel: string;
@@ -30,6 +34,7 @@ export function RevealControls({
   permission,
   holdProps,
   revealed,
+  needsLower = false,
   liftHint,
   holdHint,
   holdLabel,
@@ -63,7 +68,9 @@ export function RevealControls({
         </>
       ) : (
         <>
-          <p className="reveal-controls__hint">{liftHint}</p>
+          <p className="reveal-controls__hint" data-testid="reveal-hint" data-hint={needsLower ? 'lower' : 'lift'}>
+            {needsLower ? t('reveal.lowerFirst') : liftHint}
+          </p>
           <Button
             variant="ghost"
             className="reveal-controls__fallback"

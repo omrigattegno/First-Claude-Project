@@ -15,6 +15,7 @@ import { currentRevealer, isImposter } from '../game/engine';
 import { useGame } from '../game/store';
 import type { Player } from '../game/types';
 import { useReveal } from '../hooks/useReveal';
+import { useTapGuard } from '../hooks/useTapGuard';
 import { useT } from '../i18n';
 import '../styles/game.css';
 
@@ -32,10 +33,11 @@ function RevealTurn({ player }: { player: Player }) {
   const { state, dispatch } = useGame();
   const round = state.round;
   const [armed, setArmed] = useState(false);
-  const { revealed, effectiveMethod, permission, holdProps } = useReveal({
+  const { revealed, effectiveMethod, permission, holdProps, needsLower } = useReveal({
     method: state.settings.revealMethod,
     armed,
   });
+  const [guarded, arm] = useTapGuard();
 
   // The pass button appears a fixed delay after the FIRST reveal of this turn and then stays,
   // even while the card is lowered again. The timestamp survives StrictMode effect re-runs.
@@ -104,6 +106,7 @@ function RevealTurn({ player }: { player: Player }) {
             permission={permission}
             holdProps={holdProps}
             revealed={revealed}
+            needsLower={needsLower}
             liftHint={t('reveal.liftHint')}
             holdHint={t('reveal.holdHint')}
             holdLabel={t('reveal.holdButton')}
@@ -115,8 +118,14 @@ function RevealTurn({ player }: { player: Player }) {
                 variant="primary"
                 size="xl"
                 block
+                className={guarded ? 'is-guarded' : ''}
+                disabled={guarded}
                 data-testid="reveal-pass"
-                onClick={() => dispatch({ type: 'REVEAL_NEXT' })}
+                onClick={() => {
+                  if (guarded) return;
+                  arm();
+                  dispatch({ type: 'REVEAL_NEXT' });
+                }}
               >
                 {t('reveal.gotIt')}
               </Button>

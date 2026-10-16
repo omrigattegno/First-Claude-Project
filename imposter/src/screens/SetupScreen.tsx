@@ -1,7 +1,8 @@
 /**
- * Setup: players (add / remove / reorder), category, Start.
+ * Setup: players (add / remove / rename / reorder), category, Start.
  * Start runs unlockAudio() and, in lift mode, requestSensorPermission() synchronously inside the tap
- * (iOS needs the gesture), then startRound() + reset('game').
+ * (iOS needs the gesture), then startRound() + reset('game'). Last game's names are pre-filled by
+ * bootState() (store.tsx) once per boot, so a list the host clears here stays cleared.
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Button } from '../components/Button';
@@ -11,14 +12,12 @@ import { CategoryPicker } from '../components/pregame/CategoryPicker';
 import { PlayerList } from '../components/pregame/PlayerList';
 import { IconGear } from '../components/pregame/icons';
 import { MAX_NAME_LENGTH, MAX_PLAYERS, MIN_PLAYERS, MIN_PLAYERS_FOR_TWO_IMPOSTERS } from '../game/constants';
-import { canStart, type NameError } from '../game/engine';
-import { newId } from '../game/rng';
-import { loadLastPlayers } from '../game/storage';
+import { canStart, validatePlayerName, type NameError } from '../game/engine';
 import { useGame } from '../game/store';
 import { RANDOM_CATEGORY } from '../game/types';
 import { useT, type MessageKey } from '../i18n';
 import { unlockAudio } from '../lib/audio';
-import { requestSensorPermission } from '../lib/sensors';
+import { probeSensors, requestSensorPermission } from '../lib/sensors';
 import { useNav } from '../nav';
 import '../styles/pregame.css';
 
@@ -40,18 +39,6 @@ export function SetupScreen() {
   const [error, setError] = useState<NameError | null>(null);
   const [starting, setStarting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const prefilledRef = useRef(false);
-
-  // First visit of the evening: pre-fill last game's names so a regular group starts in seconds.
-  useEffect(() => {
-    if (prefilledRef.current) return;
-    prefilledRef.current = true;
-    if (players.length > 0) return;
-    const names = loadLastPlayers();
-    if (names.length === 0) return;
-    dispatch({ type: 'SET_PLAYERS', players: names.map((n) => ({ id: newId(), name: n })) });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const submitName = (e?: FormEvent) => {
     e?.preventDefault();
@@ -66,10 +53,34 @@ export function SetupScreen() {
     inputRef.current?.focus();
   };
 
+  // Each new row is inserted above the add field and browsers only scroll a field into view on focus,
+  // so after a successful add bring it back above the on-screen keyboard. Only while it is the active
+  // element, so a tap on a row button (remove) never scrolls.
+  useEffect(() => {
+    const el = inputRef.current;
+    if (el && document.activeElement === el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ block: 'center' });
+    }
+  }, [players.length]);
+
+  /** Inline rename from the list; returns false (editor stays open) when the name is rejected. */
+  const renamePlayer = (id: string, newName: string): boolean => {
+    if (locked) return true;
+    const err = validatePlayerName(players, newName, id);
+    if (err) {
+      setError(err);
+      return false;
+    }
+    setError(null);
+    dispatch({ type: 'RENAME_PLAYER', id, name: newName });
+    return true;
+  };
+
   const ready = canStart(state) && !locked;
   const selectedCategory = packs.some((p) => p.id === settings.categoryId) ? settings.categoryId : RANDOM_CATEGORY;
   const twoImpostersShort =
     settings.imposterCount === 2 && players.length >= MIN_PLAYERS && players.length < MIN_PLAYERS_FOR_TWO_IMPOSTERS;
+  const continuing = state.history.length > 0;
 
   const onStart = () => {
     if (!ready || starting) return;
@@ -86,7 +97,12 @@ export function SetupScreen() {
       }
     };
     if (settings.revealMethod === 'lift') {
-      requestSensorPermission().then(launch, launch);
+      // The "does this device deliver readings?" probe runs during the Pass-to countdown (not awaited),
+      // so player 1's hint and card start in the right mode on sensorless devices.
+      requestSensorPermission().then(() => {
+        void probeSensors();
+        launch();
+      }, launch);
     } else {
       launch();
     }
@@ -96,7 +112,7 @@ export function SetupScreen() {
     <main className="screen setup" data-testid="setup-screen">
       <TopBar
         leading={<BackButton onClick={() => reset('home')} testId="setup-back" />}
-        title={t('setup.title')}
+        title={continuing ? t('common.round', { n: state.history.length + 1 }) : t('setup.title')}
         trailing={
           <Button
             variant="ghost"
@@ -138,8 +154,12 @@ export function SetupScreen() {
                 disabled={locked}
                 onReorder={(ids) => dispatch({ type: 'REORDER_PLAYERS', ids })}
                 onRemove={(id) => dispatch({ type: 'REMOVE_PLAYER', id })}
+                onRename={renamePlayer}
               />
-              <p className="pg-muted">{t('setup.seatingHint')}</p>
+              <p className="pg-muted">
+                {t('setup.seatingHint')}
+                {!locked && <> · {t('setup.renameHint')}</>}
+              </p>
             </>
           )}
 

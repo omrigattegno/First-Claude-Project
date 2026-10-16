@@ -35,7 +35,16 @@ export function GuessScreen() {
       <div className="game-stack">
         <h2 className="guess__title">{t('guess.title')}</h2>
         <p className="guess__prompt">{t('guess.prompt', { name: imposter.name })}</p>
-        <p className="guess__category">{t('guess.category', { name: round.categoryName })}</p>
+        {round.config.imposterSeesCategory ? (
+          <p className="guess__category" data-testid="guess-category">
+            {t('guess.category', { name: round.categoryName })}
+          </p>
+        ) : (
+          // The frozen round rule hides the category here too: the guess is where it matters most.
+          <p className="guess__category" data-testid="guess-category-hidden">
+            {t('reveal.categoryHidden')}
+          </p>
+        )}
 
         <form className="guess__form" onSubmit={submit}>
           <label className="visually-hidden" htmlFor="guess-input">

@@ -13,9 +13,13 @@ src/
     rng.ts         crypto rng, seededRng (tests), pickOne/pickWeighted/shuffle, newId
     guess.ts       normalizeText + guessMatches (case/whitespace/punctuation-insensitive, Hebrew ה-prefix tolerant)
     engine.ts      reduce(state, action), createInitialState, prepareRound (randomness), selectors, validation
-    storage.ts     localStorage snapshot (resume after refresh), last players, saved settings, detectLanguage
-    store.tsx      <GameProvider>, useGame() -> { state, dispatch, startRound, addPlayer, packs }, useGameState()
-  words/       word packs: en/*.json, he/*.json (static imports -> bundled, offline); index.ts; custom.ts (host packs)
+    storage.ts     localStorage snapshot (resume after refresh; upgradeState fills fields older snapshots lack),
+                   last players, saved settings, detectLanguage
+    store.tsx      <GameProvider>, useGame() -> { state, dispatch, startRound, addPlayer, packs }, useGameState();
+                   bootState() pre-fills last game's players once per boot when there is no snapshot; follows
+                   the 'storage' event so a second window (tab + installed app) adopts the newer snapshot
+  words/       word packs: en/*.json, he/*.json (static imports -> bundled, offline); index.ts; custom.ts (host packs,
+               ids prefixed CUSTOM_PACK_PREFIX; cache invalidated on a cross-window 'storage' event)
   i18n/        messages.common.ts (shared), messages.pregame.ts, messages.game.ts; index.ts -> useT(), translate()
   hooks/       useReveal (lift/hold controller), useWakeLock
   lib/         sensors.ts (DeviceOrientation + permission), audio.ts (beep via WebAudio), pwa.ts
@@ -35,14 +39,18 @@ Phases: `setup -> reveal -> clues -> discussion -> vote -> [guess] -> results`.
 | setup | host | `START_ROUND` (built by `prepareRound(state, packs, rng)`; use `useGame().startRound()`) |
 | reveal | `currentRevealer(state)` = `round.order[round.revealIndex]` | `REVEAL_NEXT` (after the last player -> clues) |
 | clues | table; `currentSpeaker(state)`; `clueOrder(round)` starts at `starterId`; `round.clueRound` / `round.config.clueRounds` | `CLUE_NEXT` (after last turn of last round -> discussion, or -> vote when `config.discussionSeconds === 0`) |
-| discussion | table | `DISCUSSION_DONE` |
+| discussion | table | `DISCUSSION_START {endsAt}` once on mount (DiscussionScreen dispatches `Date.now() + config.discussionSeconds * 1000` when `round.discussionEndsAt` is null; the reducer ignores it otherwise, so StrictMode/remounts keep the first deadline and a reload resumes the countdown), then `DISCUSSION_DONE` |
 | vote | `currentVoter(state)`; ballot = `ballotFor(state, voterId)` (excludes self) | `CAST_VOTE {voterId, votedId}` (after last voter -> guess if Imposter caught && config.imposterGuess, else results) |
 | guess | `guessingImposter(state)` types a guess | `SUBMIT_GUESS {guess}` -> results |
 | results | table; `round.outcome`, `scoreboard(state)` | `START_ROUND` (next round), `EDIT_PLAYERS` (-> setup, keeps scores), `END_GAME` (-> setup, clears scores/history/usedWords) |
 
 Other actions: `ADD_PLAYER/REMOVE_PLAYER/RENAME_PLAYER/REORDER_PLAYERS/SET_PLAYERS` (setup only),
 `UPDATE_SETTINGS {patch}` (any time; rule values are frozen into `round.config` at START_ROUND, so changes
-apply from the next round; `language`/`revealMethod` apply immediately), `ABORT_ROUND` (-> setup, keeps scores).
+apply from the next round; `language`/`revealMethod` apply immediately), `ABORT_ROUND` (-> setup, keeps scores),
+`LOAD {state}` (replaces the state; runs `upgradeState`). Removing a player is not lossy: `REMOVE_PLAYER` moves
+them to `state.benched` and keeps their score, and `ADD_PLAYER` with a benched name (case-insensitive) reuses
+that id so the score and Imposter history return; `END_GAME` clears the bench. `scoreboard()` lists current
+players only. The reducer never reads the clock: screens pass `Date.now()` in the action (`DISCUSSION_START`).
 
 Outcome rules (`RoundOutcome`): plurality vote; a tie at the top means nobody is caught (`votedOutId = null`,
 `tie = true`) and the Imposter wins. Caught + correct guess -> Imposter wins. Points: table win = 1 to each
@@ -52,7 +60,13 @@ voted-out Imposter guesses; both Imposters score together.
 Imposter selection: never the previous round's Imposter on tables of 5+ (weight 0), weight 0.5 for the
 Imposter of two rounds ago. Starter: uniform. Two Imposters only when `settings.imposterCount === 2` and
 players >= 7 (`effectiveImposterCount`). Words: category-first for Random, never repeated within the
-evening (`usedWords`), difficulty Easy={1} Normal={1,2} Hard={2,3}, relaxing if a category runs dry.
+evening (`usedWords`, most recent draw last), difficulty Easy={1} Normal={1,2} Hard={2,3}, relaxing if a
+category runs dry; once a pack is exhausted its words are recycled but never the word that pack served
+last. Custom (host-typed) packs match every difficulty.
+
+Snapshot validation (`isGameState`): a non-null round must have `word.word`, `config`, indices inside
+`order`, `imposterIds`/`starterId` in `order`, and an `outcome` in the guess/results phases; otherwise the
+snapshot is dropped and the app boots fresh rather than rendering a blank phase screen.
 
 ## i18n
 

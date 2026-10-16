@@ -14,6 +14,7 @@ const en = {
   'reveal.categoryHidden': 'Category hidden',
   'reveal.imposterNote': 'Bluff: give clues as if you know the word',
   'reveal.liftHint': 'Lift the phone toward you to see your card',
+  'reveal.lowerFirst': 'Lower the phone first, then lift it',
   'reveal.holdHint': 'Hold the button to see your card; release to hide it',
   'reveal.holdButton': 'Hold to reveal',
   'reveal.cantLift': "Can't lift? Hold here",
@@ -43,7 +44,7 @@ const en = {
   'vote.question': '{name}, who is the Imposter?',
   'vote.pickOne': 'Tap a name',
   'vote.liftHint': 'Lift the phone toward you to see the ballot',
-  'vote.holdHint': 'Hold the button to see the ballot; release to hide it',
+  'vote.holdHint': 'Hold the button with one finger and tap a name with another; release to hide the ballot',
   'vote.holdButton': 'Hold to vote',
   'vote.lock': 'Lock vote and pass',
 
@@ -85,6 +86,7 @@ const en = {
   'results.pts': '{n} pts',
   'results.leader': 'Leader',
   'results.nextRound': 'Next round',
+  'results.endGame': 'End game',
 
   // Penalties
   'penalty.dareTitle': 'Dare for the losing side',
@@ -105,6 +107,7 @@ const he: Record<keyof typeof en, string> = {
   'reveal.categoryHidden': 'הקטגוריה מוסתרת',
   'reveal.imposterNote': 'בלפו: תנו רמזים כאילו אתם יודעים את המילה',
   'reveal.liftHint': 'הרימו את הטלפון לכיוונכם כדי לראות את הקלף',
+  'reveal.lowerFirst': 'הורידו קודם את הטלפון, ואז הרימו אותו',
   'reveal.holdHint': 'החזיקו את הכפתור כדי לראות את הקלף; שחררו כדי להסתיר',
   'reveal.holdButton': 'החזיקו לחשיפה',
   'reveal.cantLift': 'לא מצליחים להרים? החזיקו כאן',
@@ -131,7 +134,7 @@ const he: Record<keyof typeof en, string> = {
   'vote.question': '{name}, מי המתחזה?',
   'vote.pickOne': 'הקישו על שם',
   'vote.liftHint': 'הרימו את הטלפון לכיוונכם כדי לראות את הפתק',
-  'vote.holdHint': 'החזיקו את הכפתור כדי לראות את הפתק; שחררו כדי להסתיר',
+  'vote.holdHint': 'החזיקו את הכפתור באצבע אחת והקישו על שם באצבע אחרת; שחררו כדי להסתיר את הפתק',
   'vote.holdButton': 'החזיקו להצבעה',
   'vote.lock': 'לנעול את ההצבעה ולהעביר',
 
@@ -171,6 +174,7 @@ const he: Record<keyof typeof en, string> = {
   'results.pts': '{n} נק׳',
   'results.leader': 'מוביל/ה',
   'results.nextRound': 'סיבוב הבא',
+  'results.endGame': 'סיום משחק',
 
   'penalty.dareTitle': 'אתגר לצד המפסיד',
   'penalty.drinkTitle': 'לגימה לצד המפסיד',
