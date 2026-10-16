@@ -118,12 +118,23 @@ export interface RoundSecrets {
   imposter: string;
 }
 
+export interface RevealAllOptions {
+  /** Also look a second time on every turn (US-4). Default true. */
+  lookTwice?: boolean;
+  /** Called while each card is shown (e.g. to assert what the card says). */
+  onCard?: (card: Card, name: string) => Promise<void>;
+}
+
 /**
  * Hold mode: reveal for every player in seating order, checking the pass screen, hidden/shown/hidden/
  * re-shown (US-3, US-4) and that only the Pass button advances. Returns the secret word and who the
  * Imposter is, so the vote can be steered.
  */
-export async function revealAllHold(page: Page, names: readonly string[]): Promise<RoundSecrets> {
+export async function revealAllHold(
+  page: Page,
+  names: readonly string[],
+  { lookTwice = true, onCard }: RevealAllOptions = {},
+): Promise<RoundSecrets> {
   let word = '';
   let imposter = '';
   for (const name of names) {
@@ -138,15 +149,18 @@ export async function revealAllHold(page: Page, names: readonly string[]): Promi
     const card = await readCard(page);
     if (card.kind === 'imposter') imposter = name;
     else word = card.text;
+    await onCard?.(card, name);
     await holdUp(page);
     await expectCardHidden(page);
 
-    // US-4: looking twice on the same turn.
-    await holdDown(page);
-    const again = await readCard(page);
-    expect(again).toEqual(card);
-    await holdUp(page);
-    await expectCardHidden(page);
+    if (lookTwice) {
+      // US-4: looking twice on the same turn.
+      await holdDown(page);
+      const again = await readCard(page);
+      expect(again).toEqual(card);
+      await holdUp(page);
+      await expectCardHidden(page);
+    }
 
     await passReveal(page);
   }
@@ -221,38 +235,121 @@ export async function readSnapshot(page: Page): Promise<Record<string, unknown> 
   return raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
 }
 
+/** The persisted round, or null (typed loosely: the specs only read a few fields). */
+export async function readRound(page: Page): Promise<Record<string, unknown> | null> {
+  const snapshot = await readSnapshot(page);
+  return (snapshot?.round as Record<string, unknown> | null | undefined) ?? null;
+}
+
+/** Load the app with `snapshot` already persisted, as a refresh mid-round would (resumes into the game). */
+export async function seedSnapshot(page: Page, snapshot: unknown): Promise<void> {
+  await page.goto('/');
+  await page.evaluate(([key, value]) => localStorage.setItem(key, value), [STATE_KEY, JSON.stringify(snapshot)]);
+  await page.reload();
+}
+
+/**
+ * Pick an option of a Settings control that has no test id (the On/Off switches) by the row's
+ * aria-label and the option's label, e.g. pickSetting(page, 'Imposter sees the category', 'Off').
+ */
+export async function pickSetting(page: Page, groupLabel: string, optionLabel: string): Promise<void> {
+  const option = page
+    .getByRole('radiogroup', { name: groupLabel, exact: true })
+    .getByRole('radio', { name: optionLabel, exact: true });
+  await option.click();
+  await expect(option).toHaveAttribute('aria-checked', 'true');
+}
+
+/** "m:ss" (the discussion clock) -> seconds. */
+export function parseClock(text: string | null): number {
+  const m = /(\d+):(\d{2})/.exec(text ?? '');
+  if (!m) throw new Error(`not a m:ss clock: ${JSON.stringify(text)}`);
+  return Number(m[1]) * 60 + Number(m[2]);
+}
+
 // ---------------------------------------------------------------------------
 // Fake orientation sensor (lift mode)
 // ---------------------------------------------------------------------------
+
+interface FakeSensorWindow {
+  __beta: number;
+  __sensorTimer?: number;
+  __dispatchBeta: (beta: number) => void;
+}
 
 /**
  * Installs a fake sensor on every page of the context: a 50 ms interval dispatching
  * `deviceorientation` events on window with beta = window.__beta (gamma 0, portrait). It starts at a
  * flat 5 degrees so the app's 1.5 s "no readings => unsupported" probe is satisfied as soon as a
- * reveal screen subscribes. Change the angle with `setBeta`.
+ * reveal screen subscribes. Change the angle with `setBeta`; silence the stream with `stopFakeSensor`
+ * and dispatch single readings with `pulseBeta` (a phone at rest on Chrome Android stops reporting).
  */
 export async function installFakeSensor(context: BrowserContext): Promise<void> {
   await context.addInitScript(() => {
-    const w = window as unknown as { __beta: number; __sensorTimer?: number };
+    const w = window as unknown as FakeSensorWindow;
     w.__beta = 5;
-    const tick = () => {
+    w.__dispatchBeta = (beta: number) => {
       let ev: Event;
       try {
-        ev = new DeviceOrientationEvent('deviceorientation', { alpha: 0, beta: w.__beta, gamma: 0, absolute: false });
+        ev = new DeviceOrientationEvent('deviceorientation', { alpha: 0, beta, gamma: 0, absolute: false });
       } catch {
         ev = new CustomEvent('deviceorientation');
-        Object.defineProperty(ev, 'beta', { value: w.__beta });
+        Object.defineProperty(ev, 'beta', { value: beta });
         Object.defineProperty(ev, 'gamma', { value: 0 });
         Object.defineProperty(ev, 'alpha', { value: 0 });
       }
       window.dispatchEvent(ev);
     };
-    w.__sensorTimer = window.setInterval(tick, 50);
+    w.__sensorTimer = window.setInterval(() => w.__dispatchBeta(w.__beta), 50);
   });
 }
 
 export async function setBeta(page: Page, beta: number): Promise<void> {
   await page.evaluate((b) => {
-    (window as unknown as { __beta: number }).__beta = b;
+    (window as unknown as FakeSensorWindow).__beta = b;
   }, beta);
+}
+
+/** Stop the periodic readings on this page (the sensor "goes quiet"); `pulseBeta` still works. */
+export async function stopFakeSensor(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as FakeSensorWindow;
+    if (w.__sensorTimer !== undefined) {
+      window.clearInterval(w.__sensorTimer);
+      w.__sensorTimer = undefined;
+    }
+  });
+}
+
+/** Dispatch exactly one reading with this beta. */
+export async function pulseBeta(page: Page, beta: number): Promise<void> {
+  await page.evaluate((b) => (window as unknown as FakeSensorWindow).__dispatchBeta(b), beta);
+}
+
+/**
+ * Dispatch one reading and measure, inside the page, how long the secret card takes to reach
+ * data-revealed={revealed}: the elapsed ms, or -1 when it does not happen within maxMs. With the fake
+ * sensor stopped, only the app's own debounce timer can complete the transition.
+ */
+export async function pulseAndMeasure(page: Page, beta: number, revealed: boolean, maxMs = 3000): Promise<number> {
+  return page.evaluate(
+    ([b, want, max]) =>
+      new Promise<number>((resolve) => {
+        const card = document.querySelector('[data-testid="secret-card"]');
+        if (!card) {
+          resolve(-2);
+          return;
+        }
+        (window as unknown as FakeSensorWindow).__dispatchBeta(b);
+        const start = performance.now();
+        const poll = () => {
+          const elapsed = performance.now() - start;
+          if (card.getAttribute('data-revealed') === String(want)) resolve(elapsed);
+          else if (elapsed > max) resolve(-1);
+          else setTimeout(poll, 5);
+        };
+        poll();
+      }),
+    [beta, revealed, maxMs] as const,
+  );
 }

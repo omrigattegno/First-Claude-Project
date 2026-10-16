@@ -13,10 +13,24 @@ const messages: Record<Lang, Record<MessageKey, string>> = {
   he: { ...common.he, ...pregame.he, ...game.he },
 };
 
+/**
+ * First-strong isolate (U+2068 FSI ... U+2069 PDI) around a value interpolated into a Hebrew sentence.
+ * Without it, two Latin-script values joined only by neutral punctuation ('{name}: „{guess}”') merge into
+ * one LTR run and swap places visually. Numbers are left alone so '{n}/{max}' and '{current} מתוך {total}'
+ * render unchanged; English templates need no isolation.
+ */
+const FSI = '\u2068';
+const PDI = '\u2069';
+
 export function translate(lang: Lang, key: MessageKey, params?: Params): string {
   const template = messages[lang][key] ?? messages.en[key] ?? key;
   if (!params) return template;
-  return template.replace(/\{(\w+)\}/g, (_, k: string) => (k in params ? String(params[k]) : `{${k}}`));
+  const isolate = isRtl(lang);
+  return template.replace(/\{(\w+)\}/g, (_, k: string) => {
+    if (!(k in params)) return `{${k}}`;
+    const v = params[k];
+    return isolate && typeof v === 'string' ? `${FSI}${v}${PDI}` : String(v);
+  });
 }
 
 export function isRtl(lang: Lang): boolean {

@@ -23,7 +23,7 @@ const en = {
 } as const;
 
 const he: Record<keyof typeof en, string> = {
-  title: 'הוסיפו את מתחזה למסך הבית',
+  title: 'הוסיפו את „מתחזה” למסך הבית',
   body: 'נפתח במסך מלא ועובד גם בלי אינטרנט, מוכן לכל שולחן.',
   install: 'הוספה למסך הבית',
   iosHint: 'ב‑Safari הקישו על שיתוף ◂ הוסף למסך הבית',

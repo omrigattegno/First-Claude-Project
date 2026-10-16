@@ -26,8 +26,10 @@ src/
   components/  shared: Button, TopBar, Segmented, Modal, InstallPrompt, GameMenu
   screens/     one file per screen; GameScreen.tsx switches on state.phase
   styles/      tokens.css (design tokens), base.css
-  nav.tsx      useNav(): screen stack for home/howto/setup/settings/game
-  App.tsx      sets <html lang dir>, wake lock, renders the current screen
+  nav.tsx      useNav(): screen stack for home/howto/setup/settings/game; keeps one History guard entry
+               armed while the stack has more than one screen (platform Back pops a screen), nothing at the root
+  App.tsx      keeps <html lang dir> in sync (useLayoutEffect; main.tsx sets them once at boot before the first
+               render), wake lock, renders the current screen
 ```
 
 ## State machine (src/game/engine.ts)
@@ -78,15 +80,19 @@ No external fonts (offline): the system font stack is in tokens.css.
 
 ## Reveal contract (hooks/useReveal.ts, lib/sensors.ts)
 
-`useReveal({ method, armed })` -> `{ revealed, effectiveMethod, permission, holdProps }`.
+`useReveal({ method, armed })` -> `{ revealed, effectiveMethod, permission, needsLower, holdProps }`.
 - The secret text must only be in the DOM while `revealed` is true (empty text node otherwise), on a black
   card with light text, blurred/hidden when not revealed.
 - `armed=false` during the 3-second anti-peek countdown on the Pass screen.
-- Lift: pitch (DeviceOrientationEvent.beta) > LIFT_UP_DEGREES held LIFT_UP_DEBOUNCE_MS shows; < LIFT_DOWN_DEGREES
-  for LIFT_DOWN_DEBOUNCE_MS hides. Lowering never advances; only the Pass button does.
+- Lift: a lowered reading (pitch < LIFT_DOWN_DEGREES or >= LIFT_MAX_DEGREES, i.e. flat or face-down) must be
+  seen after arming (`needsLower` is true until then and the screens say "Lower the phone first"); then
+  LIFT_UP_DEGREES < pitch < LIFT_MAX_DEGREES held LIFT_UP_DEBOUNCE_MS shows; < LIFT_DOWN_DEGREES or
+  >= LIFT_MAX_DEGREES for LIFT_DOWN_DEBOUNCE_MS hides; a quiet sensor completes the debounce on a timer.
+  Lowering never advances; only the Pass button does.
 - Hold fallback: spread `holdProps` on a big "Hold to reveal" button (press shows, release hides).
 - `requestSensorPermission()` must run inside a tap handler (iOS 13+); call it from Setup's Start button when
-  `settings.revealMethod === 'lift'`.
+  `settings.revealMethod === 'lift'`, then `probeSensors()` (fire-and-forget) so a sensorless device settles on
+  Hold during the first Pass-to countdown.
 - Vote uses the same pattern: ballot visible only while revealed; the chosen name is never shown while flat.
 
 ## Conventions
