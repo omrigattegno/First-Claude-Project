@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useGameState } from './game/store';
 import { isRtl } from './i18n';
 import { useNav } from './nav';
@@ -14,7 +14,9 @@ export function App() {
   const { screen, reset } = useNav();
   const lang = state.settings.language;
 
-  useEffect(() => {
+  // Layout effect: it runs before the browser paints, so a language switch (and the first frame after
+  // main.tsx's boot-time set) never shows a frame in the wrong direction.
+  useLayoutEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = isRtl(lang) ? 'rtl' : 'ltr';
   }, [lang]);

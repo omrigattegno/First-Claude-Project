@@ -10,6 +10,8 @@ export type Penalty = 'off' | 'dare' | 'drink';
 
 /** The id 'random' means "draw from any category". */
 export const RANDOM_CATEGORY = 'random';
+/** Host-typed packs (src/words/custom.ts) carry this id prefix; their words match every difficulty. */
+export const CUSTOM_PACK_PREFIX = 'custom-';
 
 export type Phase =
   | 'setup'
@@ -108,6 +110,11 @@ export interface RoundState {
   /** The caught Imposter's typed guess (if any). */
   guess: string | null;
   outcome: RoundOutcome | null;
+  /**
+   * Epoch ms at which the discussion timer ends; null until the Discussion screen opens
+   * (DISCUSSION_START). Persisted so a reload mid-discussion resumes the countdown.
+   */
+  discussionEndsAt: number | null;
 }
 
 export interface HistoryEntry {
@@ -127,8 +134,14 @@ export interface GameState {
   scores: Record<string, number>;
   round: RoundState | null;
   history: HistoryEntry[];
-  /** Keys of words already drawn this evening: `${lang}:${categoryId}:${word}`. */
+  /** Keys of words already drawn this evening (`${lang}:${categoryId}:${word}`), most recent draw last. */
   usedWords: string[];
+  /**
+   * Players removed during setup this evening. Scores and history stay keyed by their id, so
+   * ADD_PLAYER with the same name (case-insensitive) brings them back with their points. Optional
+   * because snapshots written before this field existed must still load (treated as []).
+   */
+  benched?: Player[];
 }
 
 export type Action =
@@ -148,6 +161,8 @@ export type Action =
     }
   | { type: 'REVEAL_NEXT' }
   | { type: 'CLUE_NEXT' }
+  /** Sets `round.discussionEndsAt` once (ignored unless phase is 'discussion' and it is still null). */
+  | { type: 'DISCUSSION_START'; endsAt: number }
   | { type: 'DISCUSSION_DONE' }
   | { type: 'CAST_VOTE'; voterId: string; votedId: string }
   | { type: 'SUBMIT_GUESS'; guess: string }

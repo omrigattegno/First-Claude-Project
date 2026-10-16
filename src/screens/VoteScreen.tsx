@@ -3,6 +3,8 @@
  * useReveal says `revealed`. The selection lives in component state so it survives lowering and
  * re-lifting; "Lock vote and pass" (shown once a name is chosen, usable with the phone lowered)
  * dispatches CAST_VOTE. After the last voter the engine moves to guess/results by itself.
+ * In hold mode a name is tapped with a second finger while the first holds the button; browsers do not
+ * synthesise `click` for a secondary touch, so a ballot option also selects on touch/pen `pointerup`.
  */
 import { useState } from 'react';
 import { Button } from '../components/Button';
@@ -14,6 +16,7 @@ import { ballotFor, currentVoter } from '../game/engine';
 import { useGame } from '../game/store';
 import type { Player } from '../game/types';
 import { useReveal } from '../hooks/useReveal';
+import { useTapGuard } from '../hooks/useTapGuard';
 import { useT } from '../i18n';
 import '../styles/game.css';
 
@@ -30,18 +33,20 @@ function VoteTurn({ voter }: { voter: Player }) {
   const { state, dispatch } = useGame();
   const round = state.round;
   const [armed, setArmed] = useState(false);
-  const { revealed, effectiveMethod, permission, holdProps } = useReveal({
+  const { revealed, effectiveMethod, permission, holdProps, needsLower } = useReveal({
     method: state.settings.revealMethod,
     armed,
   });
   const [selected, setSelected] = useState<string | null>(null);
+  const [guarded, arm] = useTapGuard();
 
   if (!round) return null;
   const ballot = ballotFor(state, voter.id);
   const progress = t('vote.progress', { current: round.voteIndex + 1, total: round.order.length });
 
   const lock = () => {
-    if (!selected) return;
+    if (!selected || guarded) return;
+    arm();
     dispatch({ type: 'CAST_VOTE', voterId: voter.id, votedId: selected });
   };
 
@@ -79,6 +84,10 @@ function VoteTurn({ voter }: { voter: Player }) {
                       data-testid="ballot-opt"
                       data-player-id={p.id}
                       onClick={() => setSelected(p.id)}
+                      onPointerUp={(e) => {
+                        // A second finger (or pen) gets pointerup but no click; mouse and keyboard use onClick.
+                        if (e.pointerType !== 'mouse') setSelected(p.id);
+                      }}
                     >
                       <span className="ballot__opt-name">{p.name}</span>
                       <span className="ballot__opt-check" aria-hidden="true">
@@ -97,6 +106,7 @@ function VoteTurn({ voter }: { voter: Player }) {
             permission={permission}
             holdProps={holdProps}
             revealed={revealed}
+            needsLower={needsLower}
             liftHint={t('vote.liftHint')}
             holdHint={t('vote.holdHint')}
             holdLabel={t('vote.holdButton')}
@@ -104,7 +114,15 @@ function VoteTurn({ voter }: { voter: Player }) {
 
           <div className="reveal__pass">
             {selected !== null && (
-              <Button variant="primary" size="xl" block className="vote__lock" data-testid="vote-lock" onClick={lock}>
+              <Button
+                variant="primary"
+                size="xl"
+                block
+                className={`vote__lock ${guarded ? 'is-guarded' : ''}`.trim()}
+                disabled={guarded}
+                data-testid="vote-lock"
+                onClick={lock}
+              >
                 {t('vote.lock')}
               </Button>
             )}

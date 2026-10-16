@@ -9,6 +9,11 @@ const en = {
   'home.startOver': 'Start over',
   'home.startOverTitle': 'Start over?',
   'home.startOverBody': 'The current round and all scores will be cleared.',
+  'home.evening': 'A game is in progress, scores are kept',
+  'home.continueEvening': 'Continue (round {n})',
+  'home.newGame': 'New game',
+  'home.newGameTitle': 'Start a new game?',
+  'home.newGameBody': 'The scores from this game will be cleared.',
   'home.languageLabel': 'Language',
 
   // How to play
@@ -45,6 +50,8 @@ const en = {
   'setup.moveUp': 'Move {name} up',
   'setup.moveDown': 'Move {name} down',
   'setup.dragHandle': 'Drag to reorder {name}',
+  'setup.rename': 'Rename {name}',
+  'setup.renameHint': 'Tap a name to edit it',
   'setup.category': 'Category',
   'setup.customBadge': 'Yours',
   'setup.needPlayers': 'Add at least {min} players',
@@ -114,6 +121,11 @@ const he: Record<keyof typeof en, string> = {
   'home.startOver': 'להתחיל מחדש',
   'home.startOverTitle': 'להתחיל מחדש?',
   'home.startOverBody': 'הסיבוב הנוכחי והניקוד של כולם יימחקו.',
+  'home.evening': 'יש משחק פעיל, הניקוד נשמר',
+  'home.continueEvening': 'להמשיך (סיבוב {n})',
+  'home.newGame': 'משחק חדש',
+  'home.newGameTitle': 'להתחיל משחק חדש?',
+  'home.newGameBody': 'הניקוד של המשחק הזה יימחק.',
   'home.languageLabel': 'שפה',
 
   // How to play
@@ -149,6 +161,8 @@ const he: Record<keyof typeof en, string> = {
   'setup.moveUp': 'להעביר את {name} למעלה',
   'setup.moveDown': 'להעביר את {name} למטה',
   'setup.dragHandle': 'גרירה לשינוי המקום של {name}',
+  'setup.rename': 'לשנות את השם של {name}',
+  'setup.renameHint': 'נוגעים בשם כדי לערוך אותו',
   'setup.category': 'קטגוריה',
   'setup.customBadge': 'שלכם',
   'setup.needPlayers': 'צריך לפחות {min} שחקנים',

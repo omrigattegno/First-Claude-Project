@@ -4,7 +4,7 @@
  * drink prompts are sips, never shots, and every dare can be done at a table.
  * Pure data + a picker so it can be unit-tested without a browser.
  */
-import { pickOne } from './rng';
+import { pickOne, seededRng } from './rng';
 import type { Lang, Rng, RoundState } from './types';
 
 export type PenaltyKind = 'dare' | 'drink';
@@ -98,6 +98,29 @@ export const PENALTY_PROMPTS: Record<PenaltyKind, Record<Lang, readonly string[]
 export function pickPenalty(kind: PenaltyKind, lang: Lang, rng: Rng): string {
   const list = PENALTY_PROMPTS[kind][lang] ?? PENALTY_PROMPTS[kind].en;
   return pickOne(rng, list);
+}
+
+/** 32-bit FNV-1a hash of a string (seeds the per-round prompt from the secret word). */
+export function hashString(s: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+
+/** Seed for a round's penalty prompt: fixed for the round, different from one round to the next. */
+export function penaltySeed(round: Pick<RoundState, 'number' | 'word'>): number {
+  return (Math.imul(round.number, 7919) + hashString(round.word.word)) >>> 0;
+}
+
+/**
+ * The prompt for a finished round: a pure function of the round (its number and secret word), so the
+ * Results screen shows the same prompt after a remount or a reload instead of re-rolling it.
+ */
+export function penaltyForRound(kind: PenaltyKind, lang: Lang, round: Pick<RoundState, 'number' | 'word'>): string {
+  return pickPenalty(kind, lang, seededRng(penaltySeed(round)));
 }
 
 /**

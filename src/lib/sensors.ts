@@ -7,7 +7,9 @@
  *  - subscribeSensorPermission(cb) / useSensorPermission(): react to permission changes
  *  - subscribePitch(cb): stream of device pitch in degrees; 0 = flat screen-up, 90 = upright facing the user,
  *    negative = tilted away. One window listener is shared by all subscribers (ref-counted), so nothing
- *    reads the sensors unless a reveal/vote screen is subscribed.
+ *    reads the sensors unless a reveal/vote screen is subscribed (or probeSensors() is running).
+ *  - probeSensors(): resolve the "no sensors" verdict early (Setup's Start tap, during the first Pass-to
+ *    countdown) instead of 1.5 s after the first card mounts; resolves with the resulting permission.
  *
  * Permission model:
  *  - 'unsupported': no DeviceOrientationEvent, or the API exists but never delivered a numeric reading
@@ -278,6 +280,50 @@ export function subscribePitch(cb: PitchListener): () => void {
     pitchListeners.delete(cb);
     if (pitchListeners.size === 0) stopListening();
   };
+}
+
+/** Extra time the early probe waits past PROBE_TIMEOUT_MS so the verdict timer always fires first. */
+const PROBE_GRACE_MS = 100;
+
+/**
+ * Run the "does this device really deliver readings?" probe now instead of when the first card mounts.
+ * Call it from Setup's Start handler once requestSensorPermission() has resolved (the PassTo countdown
+ * then hides the 1.5 s wait, so player 1's Pass-to hint and card start in the right mode on desktops
+ * and on Android phones with the Motion-sensors site setting off). It subscribes a no-op listener and
+ * unsubscribes as soon as the verdict is known: the first reading keeps 'granted', the probe timeout flips
+ * to 'unsupported', and PROBE_TIMEOUT_MS + PROBE_GRACE_MS is the hard cap (e.g. page hidden, verdict
+ * deferred). Resolves with the permission at that point; a no-op when there is nothing to probe (not
+ * 'granted', or a reading has already been seen). Safe to call concurrently with a reveal screen.
+ */
+export function probeSensors(): Promise<SensorPermission> {
+  return new Promise((resolve) => {
+    if (gotRealReading || getSensorPermission() !== 'granted') {
+      resolve(getSensorPermission());
+      return;
+    }
+    let done = false;
+    let unsubscribePitch: (() => void) | null = null;
+    let unsubscribePermission: (() => void) | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      if (timer !== null) clearTimeout(timer);
+      unsubscribePermission?.();
+      unsubscribePitch?.();
+      resolve(getSensorPermission());
+    };
+    unsubscribePermission = subscribeSensorPermission(() => {
+      if (getSensorPermission() !== 'granted') finish();
+    });
+    unsubscribePitch = subscribePitch(finish);
+    if (done) return; // subscribePitch found no API and flipped to 'unsupported' synchronously
+    if (gotRealReading) {
+      finish();
+      return;
+    }
+    timer = setTimeout(finish, PROBE_TIMEOUT_MS + PROBE_GRACE_MS);
+  });
 }
 
 /** Test-only: forget all state (listeners, probe, cached permission). */

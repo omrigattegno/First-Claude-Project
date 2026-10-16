@@ -91,8 +91,9 @@ Source: GitHub Actions**. The site then lives at `https://<owner>.github.io/<rep
   the word packs, which are static JSON imports bundled into the JavaScript. After the first visit no
   round needs the network, and the app makes no runtime network calls at all (no fonts, no CDNs, no
   analytics).
-- Updates: `registerType: 'autoUpdate'`. A new build is installed silently in the background and shows
-  on the next launch, so nothing interrupts a round.
+- Updates: `registerType: 'autoUpdate'`. A new build's worker is installed silently in the background
+  and takes control of the page; `src/lib/pwa.ts` passes a no-op `onNeedReload`, so the page is
+  deliberately not reloaded when that happens and the new build is used from the next launch.
 - Install card (Home screen, `src/components/InstallPrompt.tsx`): on Android/desktop Chromium it
   triggers the native *Add to Home Screen* dialog; on iOS it explains *Share ▸ Add to Home Screen*.
   It hides when the app already runs standalone, and "Not now" remembers the dismissal on the device

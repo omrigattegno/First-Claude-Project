@@ -20,10 +20,12 @@ import {
 import { guessMatches } from './guess';
 import { pickOne, pickWeighted } from './rng';
 import {
+  CUSTOM_PACK_PREFIX,
   RANDOM_CATEGORY,
   type Action,
   type Difficulty,
   type GameState,
+  type Phase,
   type Player,
   type Rng,
   type RoundOutcome,
@@ -56,7 +58,19 @@ export function createInitialState(settings: Partial<Settings> = {}): GameState 
     round: null,
     history: [],
     usedWords: [],
+    benched: [],
   };
+}
+
+/**
+ * Fill in fields added after a snapshot was written so older snapshots still load
+ * (`round.discussionEndsAt`, `benched`). Returns the same object when nothing is missing.
+ */
+export function upgradeState(state: GameState): GameState {
+  let s = state;
+  if (s.round && s.round.discussionEndsAt === undefined) s = { ...s, round: { ...s.round, discussionEndsAt: null } };
+  if (s.benched === undefined) s = { ...s, benched: [] };
+  return s;
 }
 
 // ---------------------------------------------------------------------------
@@ -100,6 +114,11 @@ export function wordKey(lang: string, categoryId: string, word: string): string 
   return `${lang}:${categoryId}:${word}`;
 }
 
+/** Host-typed packs: their words have no real difficulty, so they match every level. */
+export function isCustomPack(pack: Pick<WordPack, 'id'>): boolean {
+  return pack.id.startsWith(CUSTOM_PACK_PREFIX);
+}
+
 function difficultyLevels(d: Difficulty): ReadonlySet<number> {
   switch (d) {
     case 'easy':
@@ -114,14 +133,21 @@ function difficultyLevels(d: Difficulty): ReadonlySet<number> {
 export interface DrawnWord {
   word: WordRecord;
   pack: WordPack;
-  /** True when every word of the category had been used and the used list was ignored. */
+  /** True when every word of the category had been used this evening and one was drawn again. */
   recycled: boolean;
 }
+
+/** Which words of a pack a draw tier may pick from. */
+type Pool =
+  | 'unused' // not drawn this evening
+  | 'recycle' // anything but the pack's most recently drawn word (usedWords is ordered by recency)
+  | 'any';
 
 /**
  * Draw a word for the round. Category-first for Random so each category is
  * equally likely; never repeats a word used this evening unless the category
- * is exhausted.
+ * is exhausted, and even then never the word the pack served last. Host-typed
+ * (custom) packs match every difficulty.
  */
 export function drawWord(
   packs: readonly WordPack[],
@@ -134,12 +160,22 @@ export function drawWord(
   const used = new Set(usedWords);
   const levels = difficultyLevels(settings.difficulty);
 
-  const candidatesFor = (pack: WordPack, ignoreUsed: boolean, ignoreDifficulty: boolean) =>
-    pack.words.filter(
-      (w) =>
-        (ignoreDifficulty || levels.has(w.difficulty)) &&
-        (ignoreUsed || !used.has(wordKey(pack.lang, pack.id, w.word))),
-    );
+  const lastDrawnKey = (pack: WordPack): string | null => {
+    const prefix = wordKey(pack.lang, pack.id, '');
+    for (let i = usedWords.length - 1; i >= 0; i--) if (usedWords[i].startsWith(prefix)) return usedWords[i];
+    return null;
+  };
+
+  const candidatesFor = (pack: WordPack, pool: Pool, ignoreDifficulty: boolean) => {
+    const anyLevel = ignoreDifficulty || isCustomPack(pack);
+    const last = pool === 'recycle' ? lastDrawnKey(pack) : null;
+    return pack.words.filter((w) => {
+      if (!anyLevel && !levels.has(w.difficulty)) return false;
+      if (pool === 'any') return true;
+      const key = wordKey(pack.lang, pack.id, w.word);
+      return pool === 'unused' ? !used.has(key) : key !== last;
+    });
+  };
 
   let chosenPacks: WordPack[];
   if (settings.categoryId === RANDOM_CATEGORY) {
@@ -149,20 +185,21 @@ export function drawWord(
     chosenPacks = p ? [p] : langPacks;
   }
 
-  // Prefer packs that still have unused words at the chosen difficulty, then
-  // relax difficulty, then allow recycling used words.
-  const tiers: Array<{ ignoreUsed: boolean; ignoreDifficulty: boolean }> = [
-    { ignoreUsed: false, ignoreDifficulty: false },
-    { ignoreUsed: false, ignoreDifficulty: true },
-    { ignoreUsed: true, ignoreDifficulty: false },
-    { ignoreUsed: true, ignoreDifficulty: true },
+  // Prefer packs that still have unused words at the chosen difficulty, then relax difficulty,
+  // then recycle used words (never the pack's previous word); 'any' only for a one-word pack.
+  const tiers: Array<{ pool: Pool; ignoreDifficulty: boolean }> = [
+    { pool: 'unused', ignoreDifficulty: false },
+    { pool: 'unused', ignoreDifficulty: true },
+    { pool: 'recycle', ignoreDifficulty: false },
+    { pool: 'recycle', ignoreDifficulty: true },
+    { pool: 'any', ignoreDifficulty: true },
   ];
   for (const tier of tiers) {
-    const available = chosenPacks.filter((p) => candidatesFor(p, tier.ignoreUsed, tier.ignoreDifficulty).length > 0);
+    const available = chosenPacks.filter((p) => candidatesFor(p, tier.pool, tier.ignoreDifficulty).length > 0);
     if (available.length === 0) continue;
     const pack = pickOne(rng, available);
-    const word = pickOne(rng, candidatesFor(pack, tier.ignoreUsed, tier.ignoreDifficulty));
-    return { word, pack, recycled: tier.ignoreUsed };
+    const word = pickOne(rng, candidatesFor(pack, tier.pool, tier.ignoreDifficulty));
+    return { word, pack, recycled: tier.pool !== 'unused' };
   }
   throw new Error('drawWord: no words available');
 }
@@ -351,20 +388,33 @@ function applyOutcome(state: GameState, round: RoundState, outcome: RoundOutcome
 export function reduce(state: GameState, action: Action): GameState {
   switch (action.type) {
     case 'LOAD':
-      return action.state;
+      return upgradeState(action.state);
 
     case 'ADD_PLAYER': {
       if (state.phase !== 'setup') return state;
       if (validatePlayerName(state.players, action.name)) return state;
-      if (state.players.some((p) => p.id === action.id)) return state;
-      return { ...state, players: [...state.players, { id: action.id, name: normalizeName(action.name) }] };
+      const name = normalizeName(action.name);
+      // A benched player coming back (same name, any case) keeps their id, so their score and
+      // Imposter history return with them.
+      const lower = name.toLocaleLowerCase();
+      const bench = state.benched ?? [];
+      const returning = bench.find((b) => b.name.toLocaleLowerCase() === lower);
+      const id = returning?.id ?? action.id;
+      if (state.players.some((p) => p.id === id)) return state;
+      return {
+        ...state,
+        players: [...state.players, { id, name }],
+        benched: returning ? bench.filter((b) => b.id !== returning.id) : state.benched,
+      };
     }
 
     case 'REMOVE_PLAYER': {
       if (state.phase !== 'setup') return state;
-      const { [action.id]: _dropped, ...scores } = state.scores;
-      void _dropped;
-      return { ...state, players: state.players.filter((p) => p.id !== action.id), scores };
+      const removed = state.players.find((p) => p.id === action.id);
+      if (!removed) return state;
+      // Bench rather than forget: scores stay keyed by id so a sit-out or a retyped name is not lossy.
+      const benched = [...(state.benched ?? []).filter((b) => b.id !== removed.id), removed];
+      return { ...state, players: state.players.filter((p) => p.id !== action.id), benched };
     }
 
     case 'RENAME_PLAYER': {
@@ -428,13 +478,15 @@ export function reduce(state: GameState, action: Action): GameState {
         votes: {},
         guess: null,
         outcome: null,
+        discussionEndsAt: null,
       };
+      // Most recent draw last (a recycled word moves to the end) so drawWord knows each pack's last word.
       const key = wordKey(s.language, action.categoryId, action.word.word);
       return {
         ...state,
         phase: 'reveal',
         round,
-        usedWords: state.usedWords.includes(key) ? state.usedWords : [...state.usedWords, key],
+        usedWords: [...state.usedWords.filter((k) => k !== key), key],
       };
     }
 
@@ -454,6 +506,13 @@ export function reduce(state: GameState, action: Action): GameState {
       if (r.clueRound < r.config.clueRounds) return { ...state, round: { ...r, clueRound: r.clueRound + 1, clueTurn: 0 } };
       const nextPhase = r.config.discussionSeconds > 0 ? 'discussion' : 'vote';
       return { ...state, phase: nextPhase };
+    }
+
+    case 'DISCUSSION_START': {
+      const r = state.round;
+      if (!r || state.phase !== 'discussion' || r.discussionEndsAt !== null) return state;
+      if (!Number.isFinite(action.endsAt)) return state;
+      return { ...state, round: { ...r, discussionEndsAt: action.endsAt } };
     }
 
     case 'DISCUSSION_DONE': {
@@ -499,7 +558,7 @@ export function reduce(state: GameState, action: Action): GameState {
     }
 
     case 'END_GAME':
-      return { ...state, phase: 'setup', round: null, scores: {}, history: [], usedWords: [] };
+      return { ...state, phase: 'setup', round: null, scores: {}, history: [], usedWords: [], benched: [] };
 
     default:
       return state;
@@ -527,6 +586,36 @@ export function sanitizeSettings(s: Settings): Settings {
   };
 }
 
+const isPlayerLike = (p: unknown): boolean =>
+  !!p && typeof p === 'object' && typeof (p as Player).id === 'string' && typeof (p as Player).name === 'string';
+
+/** A round the phase screens can render: every index and id the selectors read points into `order`. */
+function isRoundState(x: unknown, phase: Phase): boolean {
+  if (!x || typeof x !== 'object') return false;
+  const r = x as Partial<RoundState>;
+  if (!Array.isArray(r.order) || r.order.length === 0 || !r.order.every((id) => typeof id === 'string')) return false;
+  const order: string[] = r.order;
+  const inOrder = (id: unknown) => typeof id === 'string' && order.includes(id);
+  const index = (i: unknown) => Number.isInteger(i) && (i as number) >= 0 && (i as number) < order.length;
+  return (
+    typeof r.word?.word === 'string' &&
+    !!r.config &&
+    typeof r.config === 'object' &&
+    index(r.revealIndex) &&
+    index(r.clueTurn) &&
+    index(r.voteIndex) &&
+    Array.isArray(r.imposterIds) &&
+    r.imposterIds.length > 0 &&
+    r.imposterIds.every(inOrder) &&
+    inOrder(r.starterId) &&
+    !!r.votes &&
+    typeof r.votes === 'object' &&
+    (r.discussionEndsAt == null || typeof r.discussionEndsAt === 'number') &&
+    // The guess and results screens read the outcome computed when the last vote was cast.
+    ((phase !== 'results' && phase !== 'guess') || (!!r.outcome && typeof r.outcome === 'object'))
+  );
+}
+
 /** Validate a persisted snapshot before resuming it. */
 export function isGameState(x: unknown): x is GameState {
   if (!x || typeof x !== 'object') return false;
@@ -537,13 +626,14 @@ export function isGameState(x: unknown): x is GameState {
     typeof s.phase === 'string' &&
     phases.includes(s.phase) &&
     Array.isArray(s.players) &&
-    s.players.every((p) => p && typeof p.id === 'string' && typeof p.name === 'string') &&
+    s.players.every(isPlayerLike) &&
+    (s.benched === undefined || (Array.isArray(s.benched) && s.benched.every(isPlayerLike))) &&
     !!s.settings &&
     typeof s.settings === 'object' &&
     !!s.scores &&
     typeof s.scores === 'object' &&
     Array.isArray(s.history) &&
     Array.isArray(s.usedWords) &&
-    (s.round === null || (typeof s.round === 'object' && s.round !== null && Array.isArray(s.round.order)))
+    (s.round === null || isRoundState(s.round, s.phase as Phase))
   );
 }

@@ -2,7 +2,9 @@
  * Discussion timer: a big m:ss countdown derived from an end timestamp (never a decrementing
  * counter), a progress ring, one beep + vibration at DISCUSSION_BEEP_AT_SECONDS, an end beep at zero.
  * The screen never advances by itself: "Vote now" is available throughout and becomes the primary
- * "Vote" button once time is up (DISCUSSION_DONE).
+ * "Vote" button once time is up (DISCUSSION_DONE). The deadline lives in the round
+ * (round.discussionEndsAt, set once by DISCUSSION_START on the first mount) so a reload, a remount or
+ * another window resumes the countdown instead of restarting it.
  */
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../components/Button';
@@ -12,6 +14,7 @@ import { Ring } from '../components/game/Ring';
 import { formatClock, useCountdown } from '../components/game/useCountdown';
 import { DISCUSSION_BEEP_AT_SECONDS } from '../game/constants';
 import { useGame } from '../game/store';
+import { useTapGuard } from '../hooks/useTapGuard';
 import { useT } from '../i18n';
 import { beep, unlockAudio, vibrate } from '../lib/audio';
 import '../styles/game.css';
@@ -23,8 +26,19 @@ export function DiscussionScreen() {
   const totalSeconds = Math.max(1, round?.config.discussionSeconds ?? 60);
   const totalMs = totalSeconds * 1000;
 
-  const [endAt] = useState(() => Date.now() + totalMs);
+  // Until DISCUSSION_START lands (one render) the countdown runs on the same deadline we dispatch,
+  // so the clock does not jump; afterwards the persisted deadline is the only source.
+  const [fallbackEndAt] = useState(() => Date.now() + totalMs);
+  const endAt = round?.discussionEndsAt ?? fallbackEndAt;
   const remaining = useCountdown(endAt, 200);
+  // Absorbs the second tap of a double tap on Clues' "Start discussion", which sits where "Vote now" is.
+  const [guarded] = useTapGuard();
+
+  useEffect(() => {
+    // The reducer ignores it unless the phase is 'discussion' and no deadline is set yet, so
+    // StrictMode's double effect and remounts keep the first deadline.
+    if (round && round.discussionEndsAt === null) dispatch({ type: 'DISCUSSION_START', endsAt: fallbackEndAt });
+  }, [round, dispatch, fallbackEndAt]);
 
   const warnedRef = useRef(false);
   const endedRef = useRef(false);
@@ -81,11 +95,27 @@ export function DiscussionScreen() {
 
       <div className="game-actions">
         {done ? (
-          <Button variant="primary" size="xl" block data-testid="discussion-vote" onClick={onVote}>
+          <Button
+            variant="primary"
+            size="xl"
+            block
+            className={guarded ? 'is-guarded' : ''}
+            disabled={guarded}
+            data-testid="discussion-vote"
+            onClick={onVote}
+          >
             {t('discussion.vote')}
           </Button>
         ) : (
-          <Button variant="secondary" size="l" block data-testid="discussion-vote" onClick={onVote}>
+          <Button
+            variant="secondary"
+            size="l"
+            block
+            className={guarded ? 'is-guarded' : ''}
+            disabled={guarded}
+            data-testid="discussion-vote"
+            onClick={onVote}
+          >
             {t('discussion.voteNow')}
           </Button>
         )}

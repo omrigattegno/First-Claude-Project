@@ -28,17 +28,18 @@
       ]
     },
     {
-      "word": "Donald Trump",
+      "word": "Tom Cruise",
       "difficulty": 1,
       "aliases": [
-        "Trump"
+        "Cruise"
       ]
     },
     {
-      "word": "Barack Obama",
+      "word": "Dwayne Johnson",
       "difficulty": 1,
       "aliases": [
-        "Obama"
+        "The Rock",
+        "Dwayne The Rock Johnson"
       ]
     },
     {
@@ -138,7 +139,7 @@
       "difficulty": 1,
       "aliases": [
         "Jordan",
-        "MJ"
+        "Air Jordan"
       ]
     },
     {
@@ -220,10 +221,10 @@
       ]
     },
     {
-      "word": "Vladimir Putin",
+      "word": "Jackie Chan",
       "difficulty": 2,
       "aliases": [
-        "Putin"
+        "Chan"
       ]
     },
     {

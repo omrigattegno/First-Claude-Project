@@ -1,6 +1,8 @@
 /**
  * Seating-order list for Setup: drag a row by its grip handle (pointer events, works with touch),
  * or use the up/down buttons (keyboard and screen-reader path), plus a remove button per row.
+ * With `onRename` the name is a button: a tap swaps it for an inline input (Enter / blur commit,
+ * Escape cancels) so a typo can be fixed without removing the player and losing their score.
  *
  * Drag model: on pointer down we snapshot every row's vertical midpoint; while moving, the target index
  * is "how many other rows have their midpoint above the dragged row's current centre". The dragged row
@@ -37,6 +39,13 @@ export interface PlayerListProps {
   disabled?: boolean;
   onReorder: (ids: string[]) => void;
   onRemove: (id: string) => void;
+  /** Tap-to-edit names. Return false to keep the editor open (the new name was rejected). */
+  onRename?: (id: string, name: string) => boolean | void;
+}
+
+interface Edit {
+  id: string;
+  value: string;
 }
 
 function reordered(ids: readonly string[], from: number, to: number): string[] {
@@ -46,11 +55,30 @@ function reordered(ids: readonly string[], from: number, to: number): string[] {
   return next;
 }
 
-export function PlayerList({ players, disabled = false, onReorder, onRemove }: PlayerListProps) {
+export function PlayerList({ players, disabled = false, onReorder, onRemove, onRename }: PlayerListProps) {
   const t = useT();
   const listRef = useRef<HTMLOListElement>(null);
   const sessionRef = useRef<DragSession | null>(null);
   const [drag, setDrag] = useState<DragView | null>(null);
+  const [edit, setEdit] = useState<Edit | null>(null);
+  // Set when the editor is closed by code (commit / Escape) so the blur that follows does not commit again.
+  const closingRef = useRef(false);
+  const editing = onRename && !disabled ? edit : null;
+
+  const startEdit = (p: Player) => {
+    if (!onRename || disabled || sessionRef.current) return;
+    closingRef.current = false;
+    setEdit({ id: p.id, value: p.name });
+  };
+  const closeEdit = () => {
+    closingRef.current = true;
+    setEdit(null);
+  };
+  const commitEdit = (keepOpenOnError: boolean) => {
+    if (!editing || !onRename) return;
+    const ok = onRename(editing.id, editing.value) !== false;
+    if (ok || !keepOpenOnError) closeEdit();
+  };
 
   const endSession = useCallback(
     (commit: boolean) => {
@@ -169,7 +197,44 @@ export function PlayerList({ players, disabled = false, onReorder, onRemove }: P
           <span className="prow__seat" aria-hidden="true">
             {i + 1}
           </span>
-          <span className="prow__name">{p.name}</span>
+          {editing?.id === p.id ? (
+            <input
+              className="input prow__edit"
+              type="text"
+              value={editing.value}
+              aria-label={t('setup.rename', { name: p.name })}
+              autoFocus
+              autoComplete="off"
+              autoCapitalize="words"
+              autoCorrect="off"
+              enterKeyHint="done"
+              onFocus={(e) => e.currentTarget.select()}
+              onChange={(e) => setEdit({ id: p.id, value: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  commitEdit(true);
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  closeEdit();
+                }
+              }}
+              onBlur={() => {
+                if (!closingRef.current) commitEdit(false);
+              }}
+            />
+          ) : onRename && !disabled ? (
+            <button
+              type="button"
+              className="prow__name prow__name--edit"
+              aria-label={t('setup.rename', { name: p.name })}
+              onClick={() => startEdit(p)}
+            >
+              {p.name}
+            </button>
+          ) : (
+            <span className="prow__name">{p.name}</span>
+          )}
           <div className="prow__actions">
             <button
               type="button"

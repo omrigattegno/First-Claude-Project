@@ -1,7 +1,11 @@
 /**
  * Tiny WebAudio helpers (no audio assets, works offline). Never throws.
  *  - unlockAudio(): create/resume the AudioContext inside a user gesture (needed on iOS); call it from the
- *    tap that starts the discussion timer (or any earlier tap).
+ *    tap that starts the discussion timer (or any earlier tap). On iOS 17+ it also switches the page's
+ *    audio session to 'playback' so the beeps are heard with the ring/silent switch on silent (the default
+ *    'ambient' session is muted by it and iOS has no vibrate fallback). 'playback' is exclusive: another
+ *    app's music pauses while the page produces sound, which is why this is a one-time set here and not a
+ *    toggle around each beep (a category switch right before a 90 ms tone can be processed late and clip it).
  *  - beep(kind): 'tick' = one short 880 Hz tone (~90 ms) for the 10-second warning;
  *                'end'  = three short tones when the timer hits zero.
  *    Both are no-ops until unlockAudio() has run, or when WebAudio is unsupported.
@@ -21,6 +25,18 @@ function getAudioContextCtor(): AudioContextCtor | null {
 
 export function unlockAudio(): void {
   try {
+    // iOS 17+: the default ('auto') session is 'ambient' for Web-Audio-only pages and is muted by the
+    // ring/silent switch; 'playback' is not. Idempotent, and a no-op where navigator.audioSession is missing.
+    if (typeof navigator !== 'undefined') {
+      const nav = navigator as Navigator & { audioSession?: { type: string } };
+      if (nav.audioSession && nav.audioSession.type !== 'playback') {
+        try {
+          nav.audioSession.type = 'playback';
+        } catch {
+          /* ignore: unsupported value or read-only */
+        }
+      }
+    }
     if (!ctx) {
       const Ctor = getAudioContextCtor();
       if (!Ctor) return;

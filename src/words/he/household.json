@@ -44,7 +44,6 @@
     { "word": "תריס", "difficulty": 2, "aliases": ["תריסים"] },
     { "word": "מייבש שיער", "difficulty": 2, "aliases": ["פן"] },
     { "word": "מצקת", "difficulty": 2, "aliases": ["תרווד"] },
-    { "word": "מגב", "difficulty": 2, "aliases": ["ספונג'ה", "ספונגה"] },
     { "word": "שואב רובוטי", "difficulty": 3, "aliases": ["רובוט שואב", "רומבה"] },
     { "word": "דוד שמש", "difficulty": 3, "aliases": ["דוד", "בוילר"] },
     { "word": "אינטרקום", "difficulty": 3, "aliases": [] },

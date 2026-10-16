@@ -19,6 +19,7 @@ import {
   drawWord,
   effectiveImposterCount,
   guessingImposter,
+  isCustomPack,
   isGameState,
   normalizeName,
   playerName,
@@ -27,17 +28,20 @@ import {
   sanitizeSettings,
   scoreboard,
   tallyVotes,
+  upgradeState,
   validatePlayerName,
   wordKey,
 } from './engine';
 import { seededRng } from './rng';
 import {
+  CUSTOM_PACK_PREFIX,
   RANDOM_CATEGORY,
   type Action,
   type GameState,
   type HistoryEntry,
   type Lang,
   type Player,
+  type RoundState,
   type Settings,
   type WordPack,
   type WordRecord,
@@ -200,11 +204,51 @@ describe('player actions in setup', () => {
     expect(s.players[1]).toEqual({ id: 'p2', name: 'Player 2' });
   });
 
-  it('REMOVE_PLAYER removes the player and drops their score', () => {
+  it('REMOVE_PLAYER benches the player and keeps their score', () => {
     const s: GameState = { ...withPlayers(4), scores: { p1: 3, p2: 1, p3: 2 } };
     const next = reduce(s, { type: 'REMOVE_PLAYER', id: 'p2' });
     expect(next.players.map((p) => p.id)).toEqual(['p1', 'p3', 'p4']);
-    expect(next.scores).toEqual({ p1: 3, p3: 2 });
+    expect(next.scores).toEqual({ p1: 3, p2: 1, p3: 2 });
+    expect(next.benched).toEqual([{ id: 'p2', name: 'Player 2' }]);
+    expect(scoreboard(next).map((r) => r.player.id)).toEqual(['p1', 'p3', 'p4']);
+    // Unknown ids are a no-op.
+    expect(reduce(s, { type: 'REMOVE_PLAYER', id: 'ghost' })).toBe(s);
+  });
+
+  it('ADD_PLAYER with a benched name (any case) restores the id, score and history weighting', () => {
+    let s: GameState = { ...withPlayers(4), scores: { p1: 3, p2: 1, p3: 2 } };
+    s = reduce(s, { type: 'REMOVE_PLAYER', id: 'p2' });
+    s = reduce(s, { type: 'ADD_PLAYER', id: 'fresh', name: '  player 2 ' });
+    expect(s.players.map((p) => p.id)).toEqual(['p1', 'p3', 'p4', 'p2']);
+    expect(s.players[3]).toEqual({ id: 'p2', name: 'player 2' });
+    expect(s.scores.p2).toBe(1);
+    expect(s.benched).toEqual([]);
+    expect(scoreboard(s).find((r) => r.player.id === 'p2')!.score).toBe(1);
+
+    // A new name takes the new id and leaves the bench alone.
+    s = reduce(s, { type: 'REMOVE_PLAYER', id: 'p3' });
+    s = reduce(s, { type: 'ADD_PLAYER', id: 'p5', name: 'Player 5' });
+    expect(s.players.map((p) => p.id)).toEqual(['p1', 'p4', 'p2', 'p5']);
+    expect(s.benched).toEqual([{ id: 'p3', name: 'Player 3' }]);
+    expect(s.scores.p3).toBe(2);
+  });
+
+  it('bench survives EDIT_PLAYERS/ABORT_ROUND and is cleared by END_GAME', () => {
+    let s = reduce(withPlayers(5), { type: 'REMOVE_PLAYER', id: 'p5' });
+    s = reduce(revealAll(start(s, { imposterIds: ['p1'], starterId: 'p2' })), { type: 'ABORT_ROUND' });
+    expect(s.benched).toEqual([{ id: 'p5', name: 'Player 5' }]);
+    expect(reduce(s, { type: 'EDIT_PLAYERS' }).benched).toEqual(s.benched);
+    expect(reduce(s, { type: 'END_GAME' }).benched).toEqual([]);
+  });
+
+  it('a snapshot without a bench behaves as an empty bench', () => {
+    const { benched: _b, ...legacy } = { ...withPlayers(4), scores: { p2: 1 } };
+    void _b;
+    const removed = reduce(legacy as GameState, { type: 'REMOVE_PLAYER', id: 'p2' });
+    expect(removed.benched).toEqual([{ id: 'p2', name: 'Player 2' }]);
+    const added = reduce(legacy as GameState, { type: 'ADD_PLAYER', id: 'p9', name: 'Nine' });
+    expect(added.players.at(-1)).toEqual({ id: 'p9', name: 'Nine' });
+    expect(added.benched).toBeUndefined();
   });
 
   it('REORDER_PLAYERS reorders and rejects bad id lists', () => {
@@ -494,6 +538,31 @@ describe('full round with 5 players', () => {
     expect(currentVoter(s)!.id).toBe('p1');
   });
 
+  it('DISCUSSION_START records the deadline once, only in the discussion phase', () => {
+    const started = start(withPlayers(5));
+    expect(started.round!.discussionEndsAt).toBeNull();
+    const clues = revealAll(started);
+    expect(reduce(clues, { type: 'DISCUSSION_START', endsAt: 1000 })).toBe(clues);
+
+    const discussion = cluesAll(clues);
+    expect(discussion.phase).toBe('discussion');
+    expect(discussion.round!.discussionEndsAt).toBeNull();
+    expect(reduce(discussion, { type: 'DISCUSSION_START', endsAt: Number.NaN })).toBe(discussion);
+
+    const timed = reduce(discussion, { type: 'DISCUSSION_START', endsAt: 1_700_000_060_000 });
+    expect(timed.phase).toBe('discussion');
+    expect(timed.round!.discussionEndsAt).toBe(1_700_000_060_000);
+    // Idempotent: a second dispatch (StrictMode, remount) keeps the first deadline.
+    expect(reduce(timed, { type: 'DISCUSSION_START', endsAt: 1_700_000_099_000 })).toBe(timed);
+
+    const vote = reduce(timed, { type: 'DISCUSSION_DONE' });
+    expect(vote.phase).toBe('vote');
+    expect(reduce(vote, { type: 'DISCUSSION_START', endsAt: 5 })).toBe(vote);
+    // The next round starts with no deadline again.
+    const next = start(voteAll(vote, allFor('p1', 'p2')));
+    expect(next.round!.discussionEndsAt).toBeNull();
+  });
+
   it('clueRounds=1 needs exactly one pass around the table', () => {
     let s = revealAll(start(withPlayers(5, { clueRounds: 1 })));
     for (let i = 0; i < 4; i++) s = reduce(s, { type: 'CLUE_NEXT' });
@@ -665,6 +734,23 @@ describe('across rounds', () => {
   it('LOAD replaces the state wholesale', () => {
     const loaded = withPlayers(6);
     expect(reduce(createInitialState(), { type: 'LOAD', state: loaded })).toBe(loaded);
+  });
+
+  it('LOAD and upgradeState fill in fields older snapshots lack', () => {
+    const complete = cluesAll(revealAll(start(withPlayers(5))));
+    expect(upgradeState(complete)).toBe(complete);
+
+    const { discussionEndsAt: _d, ...oldRound } = complete.round!;
+    void _d;
+    const { benched: _b, ...oldState } = { ...complete, round: oldRound };
+    void _b;
+    const legacy = oldState as unknown as GameState;
+    const upgraded = reduce(createInitialState(), { type: 'LOAD', state: legacy });
+    expect(upgraded.round!.discussionEndsAt).toBeNull();
+    expect(upgraded.benched).toEqual([]);
+    expect(upgraded).toEqual(upgradeState(legacy));
+    // The upgraded discussion accepts a deadline like a fresh one.
+    expect(reduce(upgraded, { type: 'DISCUSSION_START', endsAt: 42 }).round!.discussionEndsAt).toBe(42);
   });
 });
 
@@ -890,6 +976,76 @@ describe('drawWord', () => {
     const b = drawWord(packs, settings({}), [], seededRng(123));
     expect(a).toEqual(b);
   });
+
+  it('custom packs match every difficulty, so Random + Easy still draws them', () => {
+    const custom = mkPack(`${CUSTOM_PACK_PREFIX}c1`, 'en', [
+      ['inside joke', 2],
+      ['the neighbour', 2],
+    ]);
+    expect(isCustomPack(custom)).toBe(true);
+    expect(isCustomPack(food)).toBe(false);
+    const rng = seededRng(21);
+    const N = 600;
+    let customCount = 0;
+    for (let i = 0; i < N; i++) {
+      const d = drawWord([food, custom], settings({ categoryId: RANDOM_CATEGORY, difficulty: 'easy' }), [], rng);
+      if (d.pack === custom) customCount++;
+      else expect(d.word.difficulty).toBe(1);
+    }
+    expect(customCount / N).toBeGreaterThan(0.4);
+    expect(customCount / N).toBeLessThan(0.6);
+    // Explicitly chosen with Hard: every custom word is eligible too.
+    const hard = drawWord([food, custom], settings({ categoryId: custom.id, difficulty: 'hard' }), [], rng);
+    expect(hard.pack).toBe(custom);
+  });
+
+  it('recycling never redraws the word the pack served last', () => {
+    const pack = mkPack('duo', 'en', [
+      ['a', 1],
+      ['b', 1],
+    ]);
+    const rng = seededRng(4);
+    // usedWords is ordered by recency: 'b' was drawn after 'a'.
+    for (let i = 0; i < 50; i++) {
+      const d = drawWord([pack], settings({ categoryId: 'duo' }), [wordKey('en', 'duo', 'a'), wordKey('en', 'duo', 'b')], rng);
+      expect(d.recycled).toBe(true);
+      expect(d.word.word).toBe('a');
+    }
+    for (let i = 0; i < 50; i++) {
+      const d = drawWord([pack], settings({ categoryId: 'duo' }), [wordKey('en', 'duo', 'b'), wordKey('en', 'duo', 'a')], rng);
+      expect(d.word.word).toBe('b');
+    }
+    // Other packs' keys do not count as this pack's last word.
+    const other = wordKey('en', 'other', 'a');
+    const d = drawWord([pack], settings({ categoryId: 'duo' }), [wordKey('en', 'duo', 'b'), wordKey('en', 'duo', 'a'), other], rng);
+    expect(d.word.word).toBe('b');
+  });
+
+  it('a one-word pack can still recycle its only word', () => {
+    const solo = mkPack('solo', 'en', [['only', 3]]);
+    const d = drawWord([solo], settings({ categoryId: 'solo', difficulty: 'easy' }), [wordKey('en', 'solo', 'only')], seededRng(1));
+    expect(d.word.word).toBe('only');
+    expect(d.recycled).toBe(true);
+  });
+
+  it('consecutive rounds from an exhausted pack never repeat a word', () => {
+    const pack = mkPack('duo', 'en', [
+      ['a', 1],
+      ['b', 1],
+    ]);
+    const rng = seededRng(8);
+    let s = withPlayers(5, { categoryId: 'duo' });
+    let previous: string | null = null;
+    for (let i = 0; i < 20; i++) {
+      const a = prepareRound(s, [pack], rng);
+      expect(a.word.word).not.toBe(previous);
+      previous = a.word.word;
+      s = reduce(reduce(s, a), { type: 'ABORT_ROUND' });
+      // The most recent draw is always last.
+      expect(s.usedWords.at(-1)).toBe(wordKey('en', 'duo', a.word.word));
+      expect(s.usedWords).toHaveLength(Math.min(2, i + 1));
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -1058,6 +1214,25 @@ describe('isGameState', () => {
     expect(isGameState(JSON.parse(JSON.stringify(toVote(start(withPlayers(5))))))).toBe(true);
   });
 
+  it('accepts every phase of a played round, and snapshots written before newer fields existed', () => {
+    const roundTrip = (s: GameState) => JSON.parse(JSON.stringify(s)) as Record<string, unknown>;
+    let s = start(withPlayers(5));
+    const seen: string[] = [];
+    for (const step of [revealAll, cluesAll, (x: GameState) => reduce(x, { type: 'DISCUSSION_DONE' }), (x: GameState) => voteAll(x, allFor('p3', 'p1')), (x: GameState) => reduce(x, { type: 'SUBMIT_GUESS', guess: 'x' })]) {
+      expect(isGameState(roundTrip(s))).toBe(true);
+      seen.push(s.phase);
+      s = step(s);
+    }
+    expect(s.phase).toBe('results');
+    expect(seen).toEqual(['reveal', 'clues', 'discussion', 'vote', 'guess']);
+    expect(isGameState(roundTrip(s))).toBe(true);
+
+    const legacy = roundTrip(s);
+    delete legacy.benched;
+    delete (legacy.round as Record<string, unknown>).discussionEndsAt;
+    expect(isGameState(legacy)).toBe(true);
+  });
+
   it('rejects garbage', () => {
     const good = createInitialState();
     for (const bad of [
@@ -1072,6 +1247,8 @@ describe('isGameState', () => {
       { ...good, players: 'none' },
       { ...good, players: [{ id: 1, name: 'x' }] },
       { ...good, players: [null] },
+      { ...good, benched: 'none' },
+      { ...good, benched: [{ id: 'x' }] },
       { ...good, settings: null },
       { ...good, scores: null },
       { ...good, history: {} },
@@ -1081,5 +1258,39 @@ describe('isGameState', () => {
     ]) {
       expect(isGameState(bad)).toBe(false);
     }
+  });
+
+  it('rejects a round the phase screens could not render', () => {
+    const vote = toVote(start(withPlayers(5)));
+    const r = vote.round!;
+    const withRound = (round: Partial<RoundState> | Record<string, unknown>, phase = vote.phase) => ({ ...vote, phase, round: { ...r, ...round } });
+    for (const bad of [
+      withRound({ order: [] }),
+      withRound({ order: ['p1', 2] }),
+      withRound({ word: null }),
+      withRound({ word: { category: 'food' } }),
+      withRound({ config: null }),
+      withRound({ revealIndex: 5 }),
+      withRound({ revealIndex: -1 }),
+      withRound({ revealIndex: 1.5 }),
+      withRound({ clueTurn: 5 }),
+      withRound({ voteIndex: 'x' }),
+      withRound({ imposterIds: [] }),
+      withRound({ imposterIds: ['ghost'] }),
+      withRound({ imposterIds: 'p3' }),
+      withRound({ starterId: 'ghost' }),
+      withRound({ votes: null }),
+      withRound({ discussionEndsAt: 'soon' }),
+      withRound({ outcome: null }, 'results'),
+      withRound({ outcome: null }, 'guess'),
+    ]) {
+      expect(isGameState(bad)).toBe(false);
+    }
+    // The same round with an outcome is fine in results, and a null deadline is fine anywhere.
+    const done = reduce(voteAll(vote, allFor('p1', 'p2')), { type: 'SUBMIT_GUESS', guess: 'x' });
+    expect(done.phase).toBe('results');
+    expect(isGameState(done)).toBe(true);
+    expect(isGameState(withRound({ discussionEndsAt: null }))).toBe(true);
+    expect(isGameState(withRound({ discussionEndsAt: 1234 }))).toBe(true);
   });
 });

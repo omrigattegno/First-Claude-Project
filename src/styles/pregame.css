@@ -388,6 +388,23 @@
   font-size: var(--fs-m);
   padding-inline: var(--space-1);
 }
+/* Tap-to-rename: the name is a button that looks like the text, full row height for the tap target. */
+.prow__name--edit {
+  align-self: stretch;
+  min-height: var(--tap);
+  text-align: start;
+  border-radius: var(--radius-s);
+}
+.prow__name--edit:active {
+  background: var(--bg-elev-2);
+}
+.prow__edit {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  font-weight: 600;
+}
 .prow__actions {
   flex: none;
   display: flex;

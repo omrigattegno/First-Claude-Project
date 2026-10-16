@@ -6,6 +6,7 @@ import {
   getScreenAngle,
   getSensorPermission,
   pitchFromOrientation,
+  probeSensors,
   requestSensorPermission,
   subscribePitch,
   subscribeSensorPermission,
@@ -373,5 +374,90 @@ describe('subscribePitch', () => {
       expect(getSensorPermission()).toBe('unsupported');
       unsubscribe();
     });
+  });
+});
+
+describe('probeSensors (early verdict from the Start tap)', () => {
+  function countListeners(spy: ReturnType<typeof vi.spyOn>): number {
+    return spy.mock.calls.filter((call) => call[0] === 'deviceorientation').length;
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  it("flips 'granted' to 'unsupported' after the probe timeout with no reading, then detaches", async () => {
+    defineOrientationApi();
+    const add = vi.spyOn(window, 'addEventListener');
+    const remove = vi.spyOn(window, 'removeEventListener');
+    const verdict = probeSensors();
+    expect(countListeners(add)).toBe(1);
+    vi.advanceTimersByTime(PROBE_TIMEOUT_MS - 1);
+    expect(getSensorPermission()).toBe('granted');
+    vi.advanceTimersByTime(1);
+    expect(getSensorPermission()).toBe('unsupported');
+    await expect(verdict).resolves.toBe('unsupported');
+    expect(countListeners(remove)).toBe(1);
+  });
+
+  it("keeps 'granted' and resolves as soon as the first reading arrives", async () => {
+    defineOrientationApi();
+    const remove = vi.spyOn(window, 'removeEventListener');
+    const verdict = probeSensors();
+    vi.advanceTimersByTime(200);
+    fireOrientation(4);
+    await expect(verdict).resolves.toBe('granted');
+    expect(countListeners(remove)).toBe(1);
+    vi.advanceTimersByTime(PROBE_TIMEOUT_MS * 2);
+    expect(getSensorPermission()).toBe('granted');
+  });
+
+  it('resolves at once when there is nothing to probe', async () => {
+    const add = vi.spyOn(window, 'addEventListener');
+    await expect(probeSensors()).resolves.toBe('unsupported'); // no API at all
+    __resetSensorsForTests();
+    defineOrientationApi(vi.fn<RequestPermission>().mockResolvedValue('granted'));
+    await expect(probeSensors()).resolves.toBe('prompt'); // iOS before the host tapped Start
+    __resetSensorsForTests();
+    defineOrientationApi(vi.fn<RequestPermission>().mockResolvedValue('denied'));
+    await requestSensorPermission();
+    await expect(probeSensors()).resolves.toBe('denied');
+    expect(countListeners(add)).toBe(0);
+  });
+
+  it('resolves at once when a reading has already been seen (no second probe)', async () => {
+    defineOrientationApi();
+    const unsubscribe = subscribePitch(() => {});
+    fireOrientation(10);
+    unsubscribe();
+    const add = vi.spyOn(window, 'addEventListener');
+    await expect(probeSensors()).resolves.toBe('granted');
+    expect(countListeners(add)).toBe(0);
+  });
+
+  it('gives up after a grace period when the verdict is deferred (page hidden) without changing it', async () => {
+    defineOrientationApi();
+    vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden');
+    const remove = vi.spyOn(window, 'removeEventListener');
+    const verdict = probeSensors();
+    vi.advanceTimersByTime(PROBE_TIMEOUT_MS + 100);
+    await expect(verdict).resolves.toBe('granted');
+    expect(countListeners(remove)).toBe(1);
+  });
+
+  it('does not detach the stream from a reveal screen that subscribed meanwhile', async () => {
+    defineOrientationApi();
+    const remove = vi.spyOn(window, 'removeEventListener');
+    const verdict = probeSensors();
+    const cb = vi.fn();
+    const unsubscribe = subscribePitch(cb);
+    vi.advanceTimersByTime(PROBE_TIMEOUT_MS);
+    await expect(verdict).resolves.toBe('unsupported');
+    expect(countListeners(remove)).toBe(0);
+    fireOrientation(50); // the late first reading still reaches the screen and recovers the verdict
+    expect(cb).toHaveBeenCalledWith(50);
+    expect(getSensorPermission()).toBe('granted');
+    unsubscribe();
+    expect(countListeners(remove)).toBe(1);
   });
 });

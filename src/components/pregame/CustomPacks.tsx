@@ -2,7 +2,7 @@
  * Custom word packs section of Settings: the list of host-typed packs (with delete) and a small form
  * (name + one word per line). Packs are stored on the device only (src/words/custom.ts).
  */
-import { useState, useSyncExternalStore, type FormEvent } from 'react';
+import { useRef, useState, useSyncExternalStore, type FormEvent } from 'react';
 import { Button } from '../Button';
 import { Modal } from '../Modal';
 import { newId } from '../../game/rng';
@@ -46,6 +46,7 @@ export function CustomPacks() {
   const [error, setError] = useState<'name' | 'words' | null>(null);
   const [savedName, setSavedName] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<CustomPack | null>(null);
+  const wordsRef = useRef<HTMLTextAreaElement>(null);
 
   const words = parseWords(text);
 
@@ -129,11 +130,20 @@ export function CustomPacks() {
               setName(e.target.value);
               if (error === 'name') setError(null);
             }}
+            onKeyDown={(e) => {
+              // "Next" on the keyboard moves to the words, instead of the form's implicit submission
+              // (which would complain about the still-empty word list).
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                wordsRef.current?.focus();
+              }
+            }}
           />
         </label>
         <label className="field">
           <span className="field__label">{t('settings.packWordsLabel')}</span>
           <textarea
+            ref={wordsRef}
             className="textarea"
             value={text}
             placeholder={t('settings.packWordsPlaceholder')}

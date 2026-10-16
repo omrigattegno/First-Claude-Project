@@ -46,7 +46,7 @@
     { "word": "אירוויזיון", "difficulty": 2, "aliases": ["אירויזיון", "Eurovision"] },
     { "word": "מילואים", "difficulty": 2, "aliases": [] },
     { "word": "רב קו", "difficulty": 2, "aliases": ["רב-קו", "רבקו"] },
-    { "word": "סחוג", "difficulty": 3, "aliases": ["סחוק", "זהוג"] },
+    { "word": "סחוג", "difficulty": 2, "aliases": ["סחוק", "זהוג"] },
     { "word": "עמבה", "difficulty": 3, "aliases": [] },
     { "word": "מופלטה", "difficulty": 3, "aliases": [] },
     { "word": "ראש הנקרה", "difficulty": 3, "aliases": ["Rosh Hanikra"] },

@@ -134,6 +134,27 @@ describe('saveSnapshot / loadSnapshot', () => {
     expect(loaded.settings).toEqual({ ...DEFAULT_SETTINGS, language: 'he', discussionSeconds: 180, clueRounds: 2 });
   });
 
+  it('fills in fields that snapshots written before them lack', () => {
+    const state = sampleState();
+    const { discussionEndsAt: _d, ...oldRound } = state.round!;
+    void _d;
+    const { benched: _b, ...oldState } = { ...state, round: oldRound };
+    void _b;
+    fake.setItem(STORAGE_KEY_STATE, JSON.stringify(oldState));
+    const loaded = loadSnapshot()!;
+    expect(loaded.round!.discussionEndsAt).toBeNull();
+    expect(loaded.benched).toEqual([]);
+    expect(loaded).toEqual(state);
+  });
+
+  it('rejects a snapshot whose round the screens could not render', () => {
+    const state = sampleState();
+    fake.setItem(STORAGE_KEY_STATE, JSON.stringify({ ...state, round: { ...state.round, revealIndex: 99 } }));
+    expect(loadSnapshot()).toBeNull();
+    fake.setItem(STORAGE_KEY_STATE, JSON.stringify({ ...state, round: { ...state.round, starterId: 'nobody' } }));
+    expect(loadSnapshot()).toBeNull();
+  });
+
   it('also stores settings and last player names', () => {
     const state = sampleState();
     saveSnapshot(state);
