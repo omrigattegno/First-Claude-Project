@@ -1,0 +1,67 @@
+# Builds the Imposter PWA and deploys it to GitHub Pages.
+#
+# The app is served from https://<owner>.github.io/<repo>/ (or from the root for a repo named
+# <owner>.github.io), so the build gets VITE_BASE accordingly: it sets Vite's base, the manifest
+# start_url/scope and the service-worker navigation fallback.
+#
+# The configure-pages step enables Pages (source: GitHub Actions) on first run. If that is refused,
+# enable it once by hand: Settings > Pages > Build and deployment > Source > "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Resolve base path
+        id: base
+        run: |
+          if [[ "${{ github.event.repository.name }}" == *.github.io ]]; then
+            echo "base=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=/${{ github.event.repository.name }}/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - run: npm run build
+        env:
+          VITE_BASE: ${{ steps.base.outputs.base }}
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

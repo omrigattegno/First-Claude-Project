@@ -23,7 +23,7 @@ no wake lock. To test the real thing on a device:
 - run `npx vite --host` and put a tunnel in front of it (`npx localtunnel --port 5173`, `cloudflared
   tunnel --url http://localhost:5173`, ngrok, …), then open the HTTPS URL on the phone; or
 - push to `main`/`master` and open the GitHub Pages URL (see *Deploy*):
-  `https://omrigattegno.github.io/First-Claude-Project/`.
+  `https://omrigattegno.github.io/imposter/`.
 
 On a desktop browser there are no motion sensors, so the reveal uses the hold-to-reveal button.
 
@@ -74,16 +74,17 @@ it, Playwright resolves its own browser as usual. Build and preview must use the
 
 ```sh
 npm run build                            # base "/"
-VITE_BASE=/First-Claude-Project/ npm run build   # under a sub-path (GitHub Pages project site)
+VITE_BASE=/imposter/ npm run build       # under a sub-path (GitHub Pages project site)
 ```
 
 `VITE_BASE` sets Vite's base, the manifest `start_url`/`scope` and the service worker's navigation
 fallback, so one build works from exactly one path.
 
-Deployment is automatic: `.github/workflows/deploy-pages.yml` (repo root) builds `imposter/` on every
-push to `main`/`master` that touches `imposter/**` (or on *Run workflow*) with Node 22, and publishes
-`imposter/dist` with `actions/deploy-pages`. One-time setup: **Settings → Pages → Build and deployment →
-Source: GitHub Actions**. The site then lives at `https://<owner>.github.io/<repo>/`.
+Deployment is automatic: `.github/workflows/deploy-pages.yml` builds the app on every push to
+`main`/`master` (or on *Run workflow*) with Node 22 and publishes `dist` with `actions/deploy-pages`.
+The workflow enables Pages itself on the first run; if that is refused, set **Settings → Pages →
+Build and deployment → Source: GitHub Actions** once. The site then lives at
+`https://<owner>.github.io/<repo>/` (or at the root for a repo named `<owner>.github.io`).
 
 ### Offline and install
 
