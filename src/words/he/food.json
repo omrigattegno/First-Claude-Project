@@ -25,6 +25,7 @@
     { "word": "קפה", "difficulty": 1, "aliases": ["קפה הפוך"] },
     { "word": "כריך", "difficulty": 1, "aliases": ["סנדוויץ'", "סנדוויץ", "סנדביץ'"] },
     { "word": "פיתה", "difficulty": 1, "aliases": ["פיתות"] },
+    { "word": "פסטרמה", "difficulty": 1, "aliases": [] },
     { "word": "לזניה", "difficulty": 2, "aliases": ["לזאניה"] },
     { "word": "שקשוקה", "difficulty": 2, "aliases": [] },
     { "word": "טחינה", "difficulty": 2, "aliases": ["טחינא"] },
@@ -52,7 +53,6 @@
     { "word": "קרם ברולה", "difficulty": 3, "aliases": [] },
     { "word": "ניוקי", "difficulty": 3, "aliases": ["גנוקי"] },
     { "word": "ברוסקטה", "difficulty": 3, "aliases": [] },
-    { "word": "פסטרמה", "difficulty": 1, "aliases": [] },
     { "word": "קימצ'י", "difficulty": 3, "aliases": ["קימצי"] },
     { "word": "מקרון", "difficulty": 3, "aliases": ["מקרונים", "מקארון"] },
     { "word": "בקלאווה", "difficulty": 3, "aliases": ["בקלווה", "באקלווה"] }

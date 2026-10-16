@@ -100,6 +100,7 @@ const en = {
   'settings.packWordsLabel': 'Words, one per line',
   'settings.packWordsPlaceholder': 'Pizza\nFalafel\n…',
   'settings.packWordsCount': '{n} words (at least {min})',
+  'settings.packWordsCountOne': '1 word (at least {min})',
   'settings.packLangNote': 'The pack is saved for the current language ({lang}).',
   'settings.packSave': 'Save pack',
   'settings.packSaved': '"{name}" saved and selected as the category.',
@@ -114,9 +115,9 @@ const en = {
 const he: Record<keyof typeof en, string> = {
   // Home
   'home.tagline': 'מילה סודית אחת. מתחזה אחד.',
-  'home.play': 'שחקו',
+  'home.play': 'לשחק',
   'home.lastPlayers': 'השחקנים מהפעם הקודמת',
-  'home.inProgress': 'יש סיבוב באמצע',
+  'home.inProgress': 'אתם באמצע סיבוב',
   'home.resume': 'להמשיך סיבוב {n}',
   'home.startOver': 'להתחיל מחדש',
   'home.startOverTitle': 'להתחיל מחדש?',
@@ -143,7 +144,7 @@ const he: Record<keyof typeof en, string> = {
   'howto.liftFlat': 'שטוח על השולחן: מוסתר',
   'howto.liftUp': 'מורם אל הפנים: גלוי',
   'howto.liftNote':
-    'מורידים את הטלפון והכרטיס מיטשטש שוב. אין חיישני תנועה? כפתור „לחצו להצגה” עושה את אותו הדבר: לוחצים כדי לראות, משחררים כדי להסתיר.',
+    'מורידים את הטלפון והקלף מיטשטש שוב. אין חיישני תנועה? כפתור „להחזיק כדי לראות” עושה את אותו הדבר: לוחצים כדי לראות, משחררים כדי להסתיר.',
   'howto.gotIt': 'הבנתי',
 
   // Setup
@@ -162,14 +163,14 @@ const he: Record<keyof typeof en, string> = {
   'setup.moveDown': 'להעביר את {name} למטה',
   'setup.dragHandle': 'גרירה לשינוי המקום של {name}',
   'setup.rename': 'לשנות את השם של {name}',
-  'setup.renameHint': 'נוגעים בשם כדי לערוך אותו',
+  'setup.renameHint': 'מקישים על שם כדי לערוך אותו',
   'setup.category': 'קטגוריה',
   'setup.customBadge': 'שלכם',
   'setup.needPlayers': 'צריך לפחות {min} שחקנים',
-  'setup.twoImpostersHint': 'שני מתחזים דורשים {min}+ שחקנים, אז בסיבוב הזה יש מתחזה אחד.',
-  'setup.start': 'מתחילים!',
+  'setup.twoImpostersHint': 'שני מתחזים – רק עם {min} שחקנים ומעלה, אז בסיבוב הזה יש מתחזה אחד.',
+  'setup.start': 'להתחיל',
   'setup.starting': 'רגע…',
-  'setup.inProgress': 'יש סיבוב באמצע. אי אפשר לשנות שחקנים עד שהוא נגמר.',
+  'setup.inProgress': 'יש סיבוב פעיל. אי אפשר לשנות שחקנים עד שייגמר.',
   'setup.resume': 'חזרה לסיבוב',
 
   // Settings
@@ -188,7 +189,7 @@ const he: Record<keyof typeof en, string> = {
   'settings.reveal.lift': 'הרמה',
   'settings.reveal.hold': 'לחיצה',
   'settings.sensors.unsupported': 'חיישני תנועה: לא זמינים במכשיר הזה, נשתמש בלחיצה.',
-  'settings.sensors.prompt': 'חיישני תנועה: נבקש הרשאה כשתלחצו על „מתחילים!”.',
+  'settings.sensors.prompt': 'חיישני תנועה: נבקש הרשאה כשתלחצו על „להתחיל”.',
   'settings.sensors.denied':
     'חיישני תנועה: ההרשאה נדחתה, נשתמש בלחיצה. באייפון: הגדרות › Safari › גישה לתנועה ולכיוון.',
   'settings.sensors.granted': 'חיישני תנועה: מוכנים.',
@@ -211,6 +212,7 @@ const he: Record<keyof typeof en, string> = {
   'settings.packWordsLabel': 'מילים, אחת בכל שורה',
   'settings.packWordsPlaceholder': 'פיצה\nפלאפל\n…',
   'settings.packWordsCount': '{n} מילים (לפחות {min})',
+  'settings.packWordsCountOne': 'מילה אחת (לפחות {min})',
   'settings.packLangNote': 'החבילה נשמרת לשפה הנוכחית ({lang}).',
   'settings.packSave': 'שמירת החבילה',
   'settings.packSaved': '„{name}” נשמרה ונבחרה כקטגוריה.',

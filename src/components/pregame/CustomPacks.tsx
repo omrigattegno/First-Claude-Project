@@ -159,7 +159,9 @@ export function CustomPacks() {
         <p className={`pg-muted ${error === 'words' ? 'field-error' : ''}`.trim()}>
           {error === 'words'
             ? t('settings.packErr.words', { min: MIN_CUSTOM_WORDS })
-            : t('settings.packWordsCount', { n: words.length, min: MIN_CUSTOM_WORDS })}
+            : words.length === 1
+              ? t('settings.packWordsCountOne', { min: MIN_CUSTOM_WORDS })
+              : t('settings.packWordsCount', { n: words.length, min: MIN_CUSTOM_WORDS })}
         </p>
         {error === 'name' && <p className="field-error">{t('settings.packErr.name')}</p>}
         <p className="pg-muted">{t('settings.packLangNote', { lang: langLabel })}</p>

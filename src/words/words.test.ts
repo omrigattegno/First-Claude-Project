@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { MIN_WORDS_PER_CATEGORY } from '../game/constants';
+import { guessMatches, normalizeText } from '../game/guess';
 import { BUILTIN_PACKS, CATEGORY_IDS } from './index';
 
 const EXPECTED: Record<'en' | 'he', string[]> = {
@@ -46,5 +47,35 @@ describe('built-in word packs', () => {
         });
       }
     });
+  }
+});
+
+// usedWords is keyed per pack, so the same word in two packs of one language could be drawn twice in an
+// evening (US-2); and a guess that two words of one pack both accept lets the Imposter hedge.
+describe('built-in word packs: collisions', () => {
+  for (const lang of ['en', 'he'] as const) {
+    const packs = BUILTIN_PACKS.filter((p) => p.lang === lang);
+    it(`${lang}: no word appears in two packs`, () => {
+      const seen = new Map<string, string>();
+      for (const pack of packs) {
+        for (const w of pack.words) {
+          const key = normalizeText(w.word);
+          expect(seen.get(key), `"${w.word}" is in both ${seen.get(key)} and ${pack.id}`).toBeUndefined();
+          seen.set(key, pack.id);
+        }
+      }
+    });
+    for (const pack of packs) {
+      it(`${lang}/${pack.id}: no guess is credited to two different words`, () => {
+        for (const a of pack.words) {
+          for (const b of pack.words) {
+            if (a === b) continue;
+            for (const guess of [a.word, ...a.aliases]) {
+              expect(guessMatches(guess, b), `"${guess}" (${a.word}) also matches "${b.word}"`).toBe(false);
+            }
+          }
+        }
+      });
+    }
   }
 });
